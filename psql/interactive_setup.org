@@ -1,0 +1,85 @@
+#+TITLE: Interactive Setup
+* Server Data
+** Create database
+#+begin_src sql-mode :product postgres :eval query
+create database server_data;
+#+end_src
+** Create tables
+* User Data
+** Create database
+#+begin_src sql-mode :product postgres :eval query
+create database user_data;
+#+end_src
+** Create tables
+*** Channels
+#+begin_src sql-mode :product postgres :eval query
+CREATE TABLE public.channels (
+    server_id bigint NOT NULL,
+    channel_id bigint NOT NULL,
+    codex character varying(10),
+    charsigns text[],
+    charseps text[],
+    inline boolean
+);
+#+end_src
+*** Channels
+#+begin_src sql-mode :product postgres :eval query
+CREATE TABLE public.characters (
+    server_id bigint NOT NULL,
+    member_id bigint NOT NULL,
+    character_name text NOT NULL,
+    attributes jsonb
+);
+#+end_src
+*** Codex list
+#+begin_src sql-mode :product postgres :eval query
+CREATE TABLE public.codex_list (
+    id character varying(10) NOT NULL,
+    display_name text
+);
+#+end_src
+*** Member pool roll stats
+#+begin_src sql-mode :product postgres :eval query
+CREATE TABLE public.member_pool_roll_stats (
+    server_id bigint,
+    member_id bigint,
+    pool text,
+    stats jsonb
+);
+#+end_src
+*** Member roll stats
+#+begin_src sql-mode :product postgres :eval query
+CREATE TABLE public.member_roll_stats (
+    server_id bigint,
+    member_id bigint,
+    stats text[]
+);
+#+end_src
+*** Member roll stats
+#+begin_src sql-mode :product postgres :eval query
+CREATE TABLE public.server_pool_roll_stats (
+    server_id bigint,
+    pool text,
+    stats jsonb
+);
+#+end_src
+*** Member roll stats
+#+begin_src sql-mode :product postgres :eval query
+CREATE TABLE public.server_roll_stats (
+    server_id bigint,
+    members bigint[],
+    stats text[]
+);
+#+end_src
+*** Servers
+#+begin_src sql-mode :product postgres :eval query
+CREATE TABLE public.servers (
+    id bigint NOT NULL,
+    codex character varying(10),
+    charsigns text[],
+    charseps text[],
+    prefixes text[],
+    inline boolean,
+    permissionroles bigint[]
+);
+#+end_src

@@ -12,10 +12,12 @@
   },
   "devDependencies": {
     "@types/yargs": "^17.0.4",
-    "typescript": "^4.4.4"
+    "typescript": "^4.4.4",
+    "typescript-sql-tagged-template-plugin": "^0.1.1"
   },
   "scripts": {
     "deploy-commands": "yarn tsc; yarn node dist/deploy-commands.js",
+    "generate-sql-schema": "yarn node scripts/generate-schema/index.js",
     "start": "yarn tsc; yarn node dist/index.js"
   }
 }

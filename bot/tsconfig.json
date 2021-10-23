@@ -9,8 +9,8 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "plugins": [{ "name": "typescript-sql-tagged-template-plugin" }]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts"]
 }

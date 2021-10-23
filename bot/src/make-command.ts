@@ -1,13 +1,12 @@
-import { Channel, CommandInteraction, Role, User } from "discord.js";
+import {
+  ApplicationCommandPermissionData,
+  Channel,
+  CommandInteraction,
+  Role,
+  User,
+} from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
-
-/*
-type Named = { name: string; description: string };
-type PickNames<
-  NamedValues extends Named,
-  Names extends NamedValues["name"]
-> = Extract<NamedValues, { name: Names }>;
-*/
+import { flattenedUnion } from "./helpers";
 
 namespace Option {
   type Base = { description: string; required: boolean };
@@ -50,33 +49,13 @@ type Option =
   | Option.Role
   | Option.Mentionable;
 
-type OptionToType<O extends Option> =
-  | (O extends Option.String
-      ? O extends { choices: [string, infer Value][] }
-        ? Value
-        : string
-      : O extends Option.Integer
-      ? O extends { choices: [string, infer Value][] }
-        ? Value
-        : number
-      : O extends Option.Number
-      ? O extends { choices: [string, infer Value][] }
-        ? Value
-        : number
-      : O extends Option.Boolean
-      ? boolean
-      : O extends Option.User
-      ? User
-      : O extends Option.Channel
-      ? Channel
-      : O extends Option.Role
-      ? Role
-      : O extends Option.Mentionable
-      ? NonNullable<ReturnType<CommandInteraction["options"]["getMentionable"]>>
-      : never)
-  | (O["required"] extends true ? never : null);
-
 type OptionMap = Record<string, Option>;
+
+export function makeOptions<Mapping extends Record<string, Option>>(
+  mapping: Mapping
+) {
+  return mapping;
+}
 
 type OptionResultMap<M extends OptionMap> = {
   [N in keyof M]: M[N] extends infer O
@@ -143,19 +122,30 @@ const optionMapToResultMap = (i: CommandInteraction, options: OptionMap) =>
     ])
   );
 
-type SubCommandArgs<M extends OptionMap> = {
+type EmptySubCommand = { description: string };
+type OptionSubCommand<M extends OptionMap> = {
   description: string;
-  options?: M;
+  options: M;
 };
 
-type SubCommandMap = Record<string, SubCommandArgs<OptionMap>>;
+type SubCommandMap = Record<
+  string,
+  OptionSubCommand<OptionMap> | EmptySubCommand
+>;
 
-type SubCommandResult<
+export function makeSubCommands<Mapping extends SubCommandMap>(
+  mapping: Mapping
+) {
+  return mapping;
+}
+
+//type SubCommandHelper
+export type SubCommandResult<
   SCMap extends SubCommandMap,
-  Name extends keyof SCMap
-> = SCMap[Name] extends SubCommandArgs<infer OM>
-  ? SCMap[Name] extends { options: any[] }
-    ? { subCommand: Name; options: OM }
+  Name
+> = Name extends keyof SCMap
+  ? SCMap[Name] extends OptionSubCommand<infer O>
+    ? { subCommand: Name; options: OptionResultMap<O> }
     : { subCommand: Name }
   : never;
 
@@ -166,47 +156,54 @@ type SubCommandGroupArgs<M extends SubCommandMap> = {
 
 type SubCommandGroupMap = Record<string, SubCommandGroupArgs<SubCommandMap>>;
 
+export function makeSubCommandGroups<
+  Mapping extends Record<string, SubCommandGroupArgs<SubCommandMap>>
+>(mapping: Mapping) {
+  return mapping;
+}
+
 type SubCommandGroupResult<
   SCGMap extends SubCommandGroupMap,
-  Name extends keyof SCGMap
-> = SCGMap[Name] extends SubCommandGroupArgs<infer M>
-  ? { group: Name } & SubCommandResult<M, keyof M>
+  Name
+> = Name extends keyof SCGMap
+  ? SCGMap[Name] extends SubCommandGroupArgs<infer SCMap>
+    ? { group: Name } & SubCommandResult<SCMap, keyof SCMap>
+    : never
   : never;
 
-type BasicCommand<M extends OptionMap> = {
+type BaseCommand<Opts> = {
   name: string;
   description: string;
+  defaultPermission?: boolean;
+  permissions?: ApplicationCommandPermissionData[];
+  execute: (interaction: CommandInteraction, options: Opts) => Promise<void>;
+};
+
+type BasicCommand<M extends OptionMap> = BaseCommand<OptionResultMap<M>> & {
   options?: M;
-  execute: (
-    interaction: CommandInteraction,
-    options: OptionResultMap<M>
-  ) => Promise<void>;
 };
 
-type FlatCommand<M extends SubCommandMap> = {
-  name: string;
-  description: string;
+export type FlatCommand<M extends SubCommandMap> = BaseCommand<
+  SubCommandResult<M, keyof M>
+> & {
   subcommands: M;
-  execute: (
-    interaction: CommandInteraction,
-    options: SubCommandResult<M, keyof M>
-  ) => Promise<void>;
 };
 
-type GroupCommand<
+type GroupCommand<SubCommandGroups extends SubCommandGroupMap> = BaseCommand<
+  SubCommandGroupResult<SubCommandGroups, keyof SubCommandGroups>
+> & {
+  subcommandGroups: SubCommandGroups;
+};
+
+type JointCommand<
   SubCommandGroups extends SubCommandGroupMap,
   SubCommands extends SubCommandMap
-> = {
-  name: string;
-  description: string;
+> = BaseCommand<
+  | SubCommandGroupResult<SubCommandGroups, keyof SubCommandGroups>
+  | SubCommandResult<SubCommands, keyof SubCommands>
+> & {
   subcommandGroups: SubCommandGroups;
-  subcommands?: SubCommands;
-  execute: (
-    interaction: CommandInteraction,
-    options:
-      | SubCommandGroupResult<SubCommandGroups, keyof SubCommandGroups>
-      | SubCommandResult<SubCommands, keyof SubCommands>
-  ) => Promise<void>;
+  subcommands: SubCommands;
 };
 
 function addOption(
@@ -294,13 +291,14 @@ function addSubCommand(
         (...args: any[]) => any
       >,
   name: string,
-  args: SubCommandArgs<OptionMap>
+  args: OptionSubCommand<OptionMap> | EmptySubCommand
 ): void {
   builder.addSubcommand((newSubCommand) => {
     newSubCommand.setName(name).setDescription(args.description);
-    Object.entries(args.options ?? {}).forEach(([n, o]) =>
-      addOption(newSubCommand, n, o)
-    );
+    if ("options" in args)
+      Object.entries(args.options).forEach(([n, o]) =>
+        addOption(newSubCommand, n, o)
+      );
     return newSubCommand;
   });
 }
@@ -319,77 +317,103 @@ function addSubCommandGroup(
   });
 }
 
+export type CommandDef = {
+  data: SlashCommandBuilder;
+  permissions?: ApplicationCommandPermissionData[];
+  execute: (interaction: CommandInteraction) => Promise<void>;
+};
+
 export function makeCommand<
   GroupMap extends SubCommandGroupMap,
   CommandMap extends SubCommandMap
->(
-  args: GroupCommand<GroupMap, CommandMap>
-): {
-  data: SlashCommandBuilder;
-  execute: (interaction: CommandInteraction) => Promise<void>;
-};
+>(args: JointCommand<GroupMap, CommandMap>): CommandDef;
+export function makeCommand<GroupMap extends SubCommandGroupMap>(
+  args: GroupCommand<GroupMap>
+): CommandDef;
 export function makeCommand<CommandMap extends SubCommandMap>(
   args: FlatCommand<CommandMap>
-): {
-  data: SlashCommandBuilder;
-  execute: (interaction: CommandInteraction) => Promise<void>;
-};
+): CommandDef;
 export function makeCommand<OMap extends OptionMap>(
   args: BasicCommand<OMap>
-): {
-  data: SlashCommandBuilder;
-  execute: (interaction: CommandInteraction) => Promise<void>;
-};
+): CommandDef;
 export function makeCommand(
   args:
-    | GroupCommand<SubCommandGroupMap, SubCommandMap>
+    | JointCommand<SubCommandGroupMap, SubCommandMap>
+    | GroupCommand<SubCommandGroupMap>
     | FlatCommand<SubCommandMap>
     | BasicCommand<OptionMap>
 ) {
   const builder = new SlashCommandBuilder()
     .setName(args.name)
     .setDescription(args.description);
+  if (args.defaultPermission !== undefined)
+    builder.setDefaultPermission(args.defaultPermission);
   if ("subcommandGroups" in args) {
     Object.entries(args.subcommandGroups).forEach(([n, groupData]) =>
       addSubCommandGroup(builder, n, groupData)
     );
-    Object.entries(args.subcommands ?? {}).forEach(([n, subCommandData]) =>
-      addSubCommand(builder, n, subCommandData)
-    );
-    const parseOptions = (i: CommandInteraction) => {
-      const group = i.options.getSubcommandGroup() ?? undefined;
-      const subCommand = i.options.getSubcommand();
-      const options =
-        group in args.subcommandGroups
-          ? args.subcommandGroups[group].subCommands[subCommand].options
-          : args.subcommands?.[subCommand].options;
+    if ("subcommands" in args) {
+      Object.entries(args.subcommands).forEach(([n, subCommandData]) =>
+        addSubCommand(builder, n, subCommandData)
+      );
+      const parseOptions = (i: CommandInteraction) => {
+        const group = i.options.getSubcommandGroup() ?? undefined;
+        const subCommand = i.options.getSubcommand();
+        const { options } =
+          group in args.subcommandGroups
+            ? flattenedUnion(
+                args.subcommandGroups[group].subCommands[subCommand]
+              )
+            : flattenedUnion(args.subcommands[subCommand]);
+        return {
+          group,
+          subCommand,
+          options: options ? optionMapToResultMap(i, options) : undefined,
+        } as
+          | SubCommandGroupResult<SubCommandGroupMap, string>
+          | SubCommandResult<SubCommandMap, string>;
+      };
       return {
-        group,
-        subCommand,
-        options: options ? optionMapToResultMap(i, options) : undefined,
-      } as
-        | SubCommandGroupResult<SubCommandGroupMap, string>
-        | SubCommandResult<SubCommandMap, string>;
-    };
-    return {
-      data: builder,
-      execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
-    };
+        data: builder,
+        permissions: args.permissions,
+        execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
+      };
+    } else {
+      const parseOptions = (i: CommandInteraction) => {
+        const group = i.options.getSubcommandGroup() ?? undefined;
+        const subCommand = i.options.getSubcommand();
+        const { options } = flattenedUnion(
+          args.subcommandGroups[group].subCommands[subCommand]
+        );
+        return {
+          group,
+          subCommand,
+          options: options ? optionMapToResultMap(i, options) : undefined,
+        } as SubCommandGroupResult<SubCommandGroupMap, string>;
+      };
+      return {
+        data: builder,
+        permissions: args.permissions,
+        execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
+      };
+    }
   } else if ("subcommands" in args) {
     Object.entries(args.subcommands ?? {}).forEach(([n, subCommandData]) =>
       addSubCommand(builder, n, subCommandData)
     );
     const parseOptions = (i: CommandInteraction) => {
-      const subCommand = i.options.getSubcommand();
-      const { options } =
-        args.subcommands[subCommand as keyof typeof args.subcommands];
+      const subCommandName = i.options.getSubcommand();
+      const subCommand =
+        args.subcommands[subCommandName as keyof typeof args.subcommands];
+      const { options } = flattenedUnion(subCommand);
       return {
-        subCommand,
+        subCommand: subCommandName,
         options: options ? optionMapToResultMap(i, options) : undefined,
       };
     };
     return {
       data: builder,
+      permissions: args.permissions,
       execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
     };
   } else {
@@ -402,6 +426,7 @@ export function makeCommand(
       : () => ({});
     return {
       data: builder,
+      permissions: args.permissions,
       execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
     };
   }
