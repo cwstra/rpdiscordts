@@ -357,14 +357,16 @@ export function makeCommand(
         addSubCommand(builder, n, subCommandData)
       );
       const parseOptions = (i: CommandInteraction) => {
-        const group = i.options.getSubcommandGroup() ?? undefined;
         const subCommand = i.options.getSubcommand();
-        const { options } =
-          group in args.subcommandGroups
-            ? flattenedUnion(
-                args.subcommandGroups[group].subCommands[subCommand]
-              )
-            : flattenedUnion(args.subcommands[subCommand]);
+        const group =
+          subCommand in args.subcommands
+            ? undefined
+            : i.options.getSubcommandGroup() ?? undefined;
+        const { options } = !group
+          ? flattenedUnion(args.subcommands[subCommand])
+          : flattenedUnion(
+              args.subcommandGroups[group].subCommands[subCommand]
+            );
         return {
           group,
           subCommand,

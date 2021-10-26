@@ -3,21 +3,27 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
+    "@databases/pg": "^5.1.1",
     "@discordjs/builders": "^0.6.0",
     "@discordjs/rest": "^0.1.0-canary.0",
+    "@rimbu/typical": "^0.2.2",
     "discord-api-types": "^0.23.1",
     "discord.js": "^13.2.0",
     "dotenv": "^10.0.0",
+    "rambda": "^6.9.0",
     "yargs": "^17.2.1"
   },
   "devDependencies": {
+    "@databases/pg-schema-cli": "^4.1.0",
+    "@databases/pg-typed": "^3.1.1",
     "@types/yargs": "^17.0.4",
     "typescript": "^4.4.4",
-    "typescript-sql-tagged-template-plugin": "^0.1.1"
+    "ynpx": "^2.1.1"
   },
   "scripts": {
     "deploy-commands": "yarn tsc; yarn node dist/deploy-commands.js",
-    "generate-sql-schema": "yarn node scripts/generate-schema/index.js",
+    "generate-server-sql-schema": "DATABASE_URL=$SERVER_DATABASE_URL yarn run ynpx @databases/pg-schema-cli --directory src/generated_schema/server_data --config ./pg-config.json",
+    "generate-user-sql-schema": "DATABASE_URL=$USER_DATABASE_URL yarn run ynpx @databases/pg-schema-cli --directory src/generated_schema/user_data --config ./pg-config.json",
     "start": "yarn tsc; yarn node dist/index.js"
   }
 }

@@ -4,6 +4,10 @@ export function assert(condition: any, msg?: string): asserts condition {
   }
 }
 
+export function typeAssert<Base, Extended extends Base>() {
+  return;
+}
+
 export type Falsey =
   | false
   | 0
@@ -16,8 +20,20 @@ export type Falsey =
   | null
   | undefined;
 
-export function compact<T>(arr: T[]): Exclude<T, Falsey>[] {
-  return arr.filter((e): e is Exclude<T, Falsey> => !!e);
+export function truthy<T>(t: T): t is Exclude<T, Falsey> {
+  return !!t;
+}
+
+export function compact<T>(arr: T[] | null | undefined): Exclude<T, Falsey>[] {
+  return arr?.filter((e): e is Exclude<T, Falsey> => !!e) ?? [];
+}
+
+export function compactMap<T>(arr: T[]): Exclude<T, Falsey>[] {
+  const result: Exclude<T, Falsey>[] = [];
+  arr.forEach((e) => {
+    if (truthy(e)) result.push(e);
+  });
+  return result;
 }
 
 export type FlattenedObjectUnion<Objs extends object> = {
@@ -46,4 +62,13 @@ export function flattenedUnion<ArrayUnion extends readonly unknown[]>(
 ): FlattenedArrayUnion<ArrayUnion> | undefined;
 export function flattenedUnion(unionMember: unknown) {
   return unionMember;
+}
+
+export type FlatObject<O> = {
+  [K in keyof O]: O[K];
+};
+
+export function trace<T>(t: T): T {
+  console.log(t);
+  return t;
 }

@@ -1,5 +1,3 @@
-const { Client } = require("pg");
-
 exports.exportSchema = async (schemaNames) => {
   const client = new Client();
   await client.connect();

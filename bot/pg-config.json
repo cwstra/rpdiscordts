@@ -1,0 +1,8 @@
+{
+  "bigIntMode": "string",
+  "types": {
+    "typeOverrides": {
+      "int8": "string"
+    }
+  }
+}

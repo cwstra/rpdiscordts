@@ -13,10 +13,15 @@ const {
   BOT_DOC_URL,
 
   DONATION_TEXT,
+
+  SERVER_DATABASE_URL: maybeServerUrl,
+  USER_DATABASE_URL: maybeUserUrl,
 } = process.env;
 
 assert(maybeClient, "No client id set");
 assert(maybeToken, "No discord token set");
+assert(maybeServerUrl, "No server url set");
+assert(maybeUserUrl, "No user url set");
 
 const client = maybeClient!;
 const token = maybeToken!;
@@ -29,4 +34,6 @@ export {
   BOT_DISCORD_SERVER,
   BOT_DOC_URL,
   DONATION_TEXT,
+  maybeServerUrl as SERVER_DATABASE_URL,
+  maybeUserUrl as USER_DATABASE_URL,
 };
