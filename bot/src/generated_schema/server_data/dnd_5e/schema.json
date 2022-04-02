@@ -1,0 +1,192 @@
+[
+  {
+    "name": "class",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "equip",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "feat",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "list",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "monster",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "other",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "race",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "rule",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "schema",
+    "columns": [
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "schema",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      }
+    ]
+  },
+  {
+    "name": "spell",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  }
+]

@@ -2,8 +2,8 @@ import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { CLIENT_ID, SERVER_ID, DISCORD_TOKEN } from "./env-vars";
 import * as yargs from "yargs";
-import { assert } from "./helpers";
-import { commandList } from "./command-helpers";
+import { assert } from "./helpers/general";
+import { commandList } from "./command-info";
 import { Client, Intents } from "discord.js";
 
 (async () => {
@@ -12,7 +12,7 @@ import { Client, Intents } from "discord.js";
   } = await yargs
     .command(
       "deploy-commands [deployType]",
-      "deploy commands to the server server and client listed in .env, or, if deployType is 'global', globally.",
+      "deploy commands to the server and client listed in .env, or, if deployType is 'global', globally.",
       (yargs) =>
         yargs.positional("deployType", {
           type: "string",
@@ -35,6 +35,8 @@ import { Client, Intents } from "discord.js";
   const commandData = commandList.map((command) => command.data.toJSON());
 
   const rest = new REST({ version: "9" }).setToken(DISCORD_TOKEN);
+
+  console.log(commandData);
 
   await rest.put(route, {
     body: commandData,

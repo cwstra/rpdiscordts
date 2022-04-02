@@ -1,0 +1,832 @@
+[
+  {
+    "name": "ability_passive",
+    "columns": [
+      {
+        "name": "book",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "effect",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "page_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      }
+    ]
+  },
+  {
+    "name": "leg_passive_data",
+    "columns": [
+      {
+        "name": "book",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "effect",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "page_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      }
+    ]
+  },
+  {
+    "name": "leg_skill_data",
+    "columns": [
+      {
+        "name": "book",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "effect",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "frequency",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "page_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      }
+    ]
+  },
+  {
+    "name": "move_data",
+    "columns": [
+      {
+        "name": "book",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "category",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "contest_kw",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "contest_stat",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "damage",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "effect",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "ele_type",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "frequency",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "legendary",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 16,
+        "typeName": "BOOL"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "page_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "range",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "skills",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_ability_passives",
+    "columns": [
+      {
+        "name": "ability_passive_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "effect_override",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_base",
+    "columns": [
+      {
+        "name": "attack",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "book",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "defense",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "dex_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "diet",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      },
+      {
+        "name": "egg_groups",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      },
+      {
+        "name": "evolutions",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      },
+      {
+        "name": "habitats",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      },
+      {
+        "name": "hatch_rate",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "hp",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "page_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "rarity",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "size_class",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "sp_attack",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "sp_defense",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "speed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "types",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      },
+      {
+        "name": "weight_class",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_dyna",
+    "columns": [
+      {
+        "name": "move_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_leg_passives",
+    "columns": [
+      {
+        "name": "leg_passive_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_leg_skills",
+    "columns": [
+      {
+        "name": "leg_skill_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_mega",
+    "columns": [
+      {
+        "name": "add_attack",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "add_defense",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "add_hp",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "add_sp_attack",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "add_sp_defense",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "add_speed",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "mega_ability_passive",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "mega_stat_passive",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "prefix",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "size_class",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "suffix",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "types",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      },
+      {
+        "name": "weight_class",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_mega_moves",
+    "columns": [
+      {
+        "name": "mega_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "move_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_mega_skills",
+    "columns": [
+      {
+        "name": "mega_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "skill_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_moves",
+    "columns": [
+      {
+        "name": "move_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_profs",
+    "columns": [
+      {
+        "name": "pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "profs",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      },
+      {
+        "name": "sigs",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_skills",
+    "columns": [
+      {
+        "name": "pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "skill_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_stat_passives",
+    "columns": [
+      {
+        "name": "pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "stat_passive_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "schema",
+    "columns": [
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "schema",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      }
+    ]
+  },
+  {
+    "name": "skill_data",
+    "columns": [
+      {
+        "name": "book",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "long_effect",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "page_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "short_effect",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "stat_passive",
+    "columns": [
+      {
+        "name": "accuracy",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "attack",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "book",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "defense",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "page_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "sp_attack",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "sp_defense",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "speed",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      }
+    ]
+  }
+]

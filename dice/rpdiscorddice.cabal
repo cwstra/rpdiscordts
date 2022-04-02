@@ -1,0 +1,100 @@
+cabal-version:      2.4
+name:               rpdiscorddice
+version:            0.1.0.0
+
+-- A short (one-line) description of the package.
+-- synopsis:
+
+-- A longer description of the package.
+-- description:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+-- The license under which the package is released.
+-- license:
+
+-- The package author(s).
+-- author:
+
+-- An email address to which users can send suggestions, bug reports, and patches.
+-- maintainer:
+
+-- A copyright notice.
+-- copyright:
+-- category:
+extra-source-files: CHANGELOG.md
+
+library
+    hs-source-dirs:   src
+    mixins: base hiding (Prelude)
+          , relude (Relude as Prelude)
+          , relude
+    build-depends:    base ^>=4.14.0.0,
+                      attoparsec,
+                      relude,
+                      ghc,
+                      hashable,
+                      integer-roots,
+                      mtl,
+                      parser-combinators,
+                      random,
+                      text,
+                      unordered-containers
+    exposed-modules:  Data.Dice,
+                      Data.KeepDrop,
+                      Data.HistoryM,
+                      Data.NumTest,
+                      Data.Resolved,
+                      Data.Simplified,
+                      Data.Timeline,
+                      Data.UserNumber,
+                      Text.DiceParser.AST,
+                      Text.DiceParser.Parser
+    default-language: Haskell2010
+
+executable rpdiscorddice
+    main-is:       Main.hs
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    hs-source-dirs:   app
+    build-depends:    base,
+                      aeson,
+                      random,
+                      relude,
+                      scotty,
+                      rpdiscorddice
+    mixins: base hiding (Prelude)
+          , relude (Relude as Prelude)
+          , relude
+    default-language: Haskell2010
+
+Test-Suite rpdiscorddice-testsuite
+    type:               exitcode-stdio-1.0
+    hs-source-dirs:     testsuite/tests, src, app
+    default-language:   Haskell2010
+    main-is:            Spec.hs
+    other-modules:      Arb
+                        MainSpec
+                        Data.HistoryMSpec
+                        Data.NumTestArb
+                        Data.UserNumberArb
+                        Text.DiceParser.ASTArb
+                        Text.DiceParser.ASTSpec
+                        Text.DiceParser.ParserSpec
+    build-depends:      base ^>=4.14.0.0,
+                        attoparsec,
+                        relude,
+                        integer-roots,
+                        random,
+                        rpdiscorddice,
+                        QuickCheck,
+                        hspec,
+                        hspec-contrib,
+                        parser-combinators,
+                        text
+    mixins: base hiding (Prelude)
+          , relude (Relude as Prelude)
+          , relude
+    build-tool-depends: hspec-discover:hspec-discover

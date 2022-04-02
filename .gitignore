@@ -14,3 +14,7 @@ yarn-error.log*
 
 .env
 bot/dist/
+
+dice/dist-newstyle/
+dice/result/
+psql/

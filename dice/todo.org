@@ -1,0 +1,13 @@
+#+TITLE: Todo
+
+* TODO Implement new strategy
+ - Use a timeline structure of lists + length.
+   Make opaque w/ three operations:
+    - Add entry
+    - Modify last entry
+    - Zip timelines
+ - Resolve values in one sweep.
+   Can resolve or simplify; resolve doesn't include dice
+   Make two similar data types for this; one with dice, one without.
+   Put in own modules for namespacing.
+* TODO Handle precedence for printing

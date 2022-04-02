@@ -1,4 +1,9 @@
-import { CommandInteraction, MessagePayload } from "discord.js";
+import * as T from "fp-ts/Task";
+import {
+  CommandInteraction,
+  InteractionDeferReplyOptions,
+  MessagePayload,
+} from "discord.js";
 import { fetchSharedEntry } from "./sql-connections";
 
 type Options = Parameters<CommandInteraction["reply"]>[0];
@@ -6,6 +11,7 @@ export type WrappedReplies = {
   defaultEphemeral: boolean;
   reply: CommandInteraction["reply"];
   editReply: CommandInteraction["editReply"];
+  deferReply: CommandInteraction["deferReply"];
 };
 
 export async function interactionWrapper(
@@ -28,11 +34,47 @@ export async function interactionWrapper(
           ? o
           : { ephemeral: true, ...o }
     : (o: Options) => o;
+  const wrapDeferOptions = defaultEphemeral
+    ? (o: InteractionDeferReplyOptions): InteractionDeferReplyOptions => ({
+        ephemeral: true,
+        ...o,
+      })
+    : (o: InteractionDeferReplyOptions) => o;
   return {
     defaultEphemeral,
     reply: ((o: Options) =>
       interaction.reply(wrapOptions(o))) as typeof interaction.reply,
     editReply: ((o: Options) =>
       interaction.editReply(wrapOptions(o))) as typeof interaction.editReply,
+    deferReply: ((o: InteractionDeferReplyOptions) =>
+      interaction.deferReply(
+        wrapDeferOptions(o)
+      )) as typeof interaction.deferReply,
   };
 }
+
+export const wrappedExecute =
+  <Options>(
+    exec: (args: {
+      interaction: CommandInteraction;
+      options: Options;
+      wrapped: WrappedReplies;
+    }) => Promise<void>
+  ) =>
+  async (interaction: CommandInteraction, options: Options): Promise<void> => {
+    const wrapped = await interactionWrapper(interaction);
+    await exec({ interaction, options, wrapped });
+  };
+
+export const wrappedTask =
+  <Options>(
+    task: (args: {
+      interaction: CommandInteraction;
+      options: Options;
+      wrapped: WrappedReplies;
+    }) => T.Task<void>
+  ) =>
+  async (interaction: CommandInteraction, options: Options): Promise<void> => {
+    const wrapped = await interactionWrapper(interaction);
+    await task({ interaction, options, wrapped })();
+  };

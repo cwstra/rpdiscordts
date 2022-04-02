@@ -1,0 +1,306 @@
+[
+  {
+    "name": "amenity",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "basic",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "building",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "enchantment",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "feats",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "items",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "list",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "maneuvers",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "race",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "schema",
+    "columns": [
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "schema",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      }
+    ]
+  },
+  {
+    "name": "song",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "spells",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "status",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "techs",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "terrain",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "weather",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  }
+]

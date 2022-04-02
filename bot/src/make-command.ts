@@ -6,7 +6,7 @@ import {
   User,
 } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { flattenedUnion } from "./helpers";
+import { flattenedUnion } from "./helpers/general";
 
 namespace Option {
   type Base = { description: string; required: boolean };

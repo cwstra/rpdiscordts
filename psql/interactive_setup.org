@@ -1,4 +1,12 @@
 #+TITLE: Interactive Setup
+* Bot user
+#+begin_src sql-mode :product postgres :eval query
+create user bot;
+#+end_src
+
+#+RESULTS:
+: CREATE ROLE
+
 * Server Data
 ** Create database
 #+begin_src sql-mode :product postgres :eval query
@@ -10,76 +18,159 @@ create database server_data;
 #+begin_src sql-mode :product postgres :eval query
 create database user_data;
 #+end_src
-** Create tables
+** Tables
 *** Channels
+**** Create
 #+begin_src sql-mode :product postgres :eval query
 CREATE TABLE public.channels (
-    server_id bigint NOT NULL,
-    channel_id bigint NOT NULL,
-    codex character varying(10),
+    server_id text,
+    channel_id text,
+    codex integer,
     charsigns text[],
     charseps text[],
-    inline boolean
+    inline boolean,
+    ephemeral boolean,
+    freeze_on_timeout boolean,
+    primary key (server_id, channel_id)
 );
+GRANT ALL ON TABLE public.channels TO bot;
 #+end_src
-*** Channels
+
+#+RESULTS:
+: CREATE TABLE
+
+*** Characters
+**** Create
 #+begin_src sql-mode :product postgres :eval query
 CREATE TABLE public.characters (
-    server_id bigint NOT NULL,
-    member_id bigint NOT NULL,
-    character_name text NOT NULL,
-    attributes jsonb
+    character_id serial primary key,
+    server_id text not null,
+    member_id text not null,
+    character_name text not null,
+    unique (server_id, character_name)
 );
+GRANT ALL ON TABLE public.characters TO bot;
+GRANT USAGE, SELECT ON SEQUENCE characters_character_id_seq TO bot;
 #+end_src
+
+#+RESULTS:
+: CREATE TABLE
+
+#+begin_src sql-mode :product postgres :eval query
+CREATE TABLE public.character_attributes (
+    character_id int,
+    name text not null,
+    value text not null,
+    primary key (character_id, name),
+    constraint fk_character
+      foreign key(character_id)
+        references characters(character_id)
+);
+GRANT ALL ON TABLE public.character_attributes TO bot;
+#+end_src
+
+#+RESULTS:
+: CREATE TABLE
+
 *** Codex list
+**** Create
 #+begin_src sql-mode :product postgres :eval query
 CREATE TABLE public.codex_list (
-    id character varying(10) NOT NULL,
-    display_name text
+    id serial primary key,
+    display_name text not null unique
 );
+GRANT SELECT ON TABLE public.codex_list TO bot;
 #+end_src
+
+#+RESULTS:
+: CREATE TABLE
+**** Populate
+#+begin_src sql-mode :product postgres :eval query
+INSERT INTO public.codex_list (display_name) values
+('Dungeons and Dragons 5e SRD'),
+('PTU 1.05'),
+('The Legend of Zelda: Reclaim the Wild 1.03'),
+('PTA 3'),
+('PTU 1.05 (With Playtest Packets)'),
+('PTU 1.05 (With Playtest + Alola)'),
+('PTU 1.05 (With Playtest + Alola + Galar)');
+#+end_src
+
+#+RESULTS:
+: ERROR:  duplicate key value violates unique constraint "codex_list_display_name_key"
+: DETAIL:  Key (display_name)=(Dungeons and Dragons 5e SRD) already exists.
+
 *** Member pool roll stats
+**** Create
 #+begin_src sql-mode :product postgres :eval query
 CREATE TABLE public.member_pool_roll_stats (
-    server_id bigint,
-    member_id bigint,
+    server_id text,
+    member_id text,
     pool text,
-    stats jsonb
+    stats jsonb,
+    primary key (server_id, member_id, pool)
 );
+GRANT ALL ON TABLE public.member_pool_roll_stats TO bot;
 #+end_src
 *** Member roll stats
+**** Create
 #+begin_src sql-mode :product postgres :eval query
 CREATE TABLE public.member_roll_stats (
-    server_id bigint,
-    member_id bigint,
-    stats text[]
+    server_id text,
+    member_id text,
+    stats text[],
+    primary key (server_id, member_id)
 );
+GRANT ALL ON TABLE public.member_roll_stats TO bot;
 #+end_src
-*** Member roll stats
+*** Server pool roll stats
+**** Create
 #+begin_src sql-mode :product postgres :eval query
 CREATE TABLE public.server_pool_roll_stats (
-    server_id bigint,
+    server_id text,
     pool text,
-    stats jsonb
+    stats jsonb,
+    primary key (server_id, pool)
 );
+GRANT ALL ON TABLE public.server_pool_roll_stats TO bot;
 #+end_src
-*** Member roll stats
+*** Server roll stats
+**** Create
 #+begin_src sql-mode :product postgres :eval query
 CREATE TABLE public.server_roll_stats (
-    server_id bigint,
-    members bigint[],
+    server_id text primary key,
+    members text[],
     stats text[]
 );
+GRANT ALL ON TABLE public.server_roll_stats TO bot;
 #+end_src
+*** Server mod roles
+**** Create
+#+begin_src sql-mode :product postgres :eval query
+CREATE TABLE public.server_mod_roles (
+    server_id text,
+    role_id text,
+    primary key (server_id, role_id)
+);
+GRANT ALL ON TABLE public.server_mod_roles TO bot;
+#+end_src
+
+#+RESULTS:
+: CREATE TABLE
 *** Servers
+**** Create
 #+begin_src sql-mode :product postgres :eval query
 CREATE TABLE public.servers (
-    id bigint NOT NULL,
-    codex character varying(10),
+    server_id text primary key,
+    codex integer,
     charsigns text[],
     charseps text[],
-    prefixes text[],
     inline boolean,
-    permissionroles bigint[]
+    ephemeral boolean,
+    freeze_on_timeout boolean
 );
+GRANT ALL ON TABLE public.servers TO bot;
 #+end_src
+
+#+RESULTS:
+: CREATE TABLE

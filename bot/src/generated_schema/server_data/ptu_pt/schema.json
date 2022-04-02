@@ -1,0 +1,437 @@
+[
+  {
+    "name": "ability_data",
+    "columns": [
+      {
+        "name": "bonus",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "book",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "effect",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "frequency",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "keywords",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "page_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "target",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "trigger",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "ambiguious_names",
+    "columns": [
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "capability_data",
+    "columns": [
+      {
+        "name": "book",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "description",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "fields",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "image",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "page_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      }
+    ]
+  },
+  {
+    "name": "deleted_abilities",
+    "columns": [
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "edge_data",
+    "columns": [
+      {
+        "name": "book",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "effect",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "frequency",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "page_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
+      },
+      {
+        "name": "prerequisites",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "feature",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "item",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "keyword",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "list",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "maneuver",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "minifeat",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "mon_nature",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "move",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "pokeedge",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "pokemon",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "schema",
+    "columns": [
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "schema",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      }
+    ]
+  },
+  {
+    "name": "status",
+    "columns": [
+      {
+        "name": "embed",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 3802,
+        "typeName": "JSONB"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  }
+]

@@ -1,7 +1,7 @@
 import { Client, Collection, CommandInteraction, Intents } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { DISCORD_TOKEN } from "./env-vars";
-import { commandList } from "./command-helpers";
+import { commandList } from "./command-info";
 
 export class ExtendedClient extends Client {
   constructor(options: ConstructorParameters<typeof Client>[0]) {
@@ -37,7 +37,10 @@ client.on("interactionCreate", async (interaction) => {
     await command.execute(interaction);
   } catch (error) {
     console.error(error);
-    await interaction.reply({
+
+    await interaction[
+      interaction.deferred || interaction.replied ? "editReply" : "reply"
+    ]({
       content: "There was an error while executing this command!",
       ephemeral: true,
     });

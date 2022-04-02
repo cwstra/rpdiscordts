@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-import { assert } from "./helpers";
+import { assert } from "./helpers/general";
 
 config();
 
@@ -16,24 +16,39 @@ const {
 
   SERVER_DATABASE_URL: maybeServerUrl,
   USER_DATABASE_URL: maybeUserUrl,
+
+  ROLL_URL: maybeRollUrl,
+  ROLL_PORT: maybeRollPort,
+  ROLL_PATH: maybeRollPath,
 } = process.env;
 
 assert(maybeClient, "No client id set");
 assert(maybeToken, "No discord token set");
 assert(maybeServerUrl, "No server url set");
 assert(maybeUserUrl, "No user url set");
+assert(maybeRollUrl, "No roll url set");
+assert(maybeRollPort, "No roll url set");
+assert(maybeRollPath, "No roll path set");
 
-const client = maybeClient!;
-const token = maybeToken!;
+const CLIENT_ID = maybeClient!;
+const DISCORD_TOKEN = maybeToken!;
+const SERVER_DATABASE_URL = maybeServerUrl!;
+const USER_DATABASE_URL = maybeUserUrl!;
+const ROLL_URL = maybeRollUrl!;
+const ROLL_PORT = maybeRollPort!;
+const ROLL_PATH = maybeRollPath!;
 
 export {
-  client as CLIENT_ID,
+  CLIENT_ID,
   SERVER_ID,
-  token as DISCORD_TOKEN,
+  DISCORD_TOKEN,
   BOT_GIT_URL,
   BOT_DISCORD_SERVER,
   BOT_DOC_URL,
   DONATION_TEXT,
-  maybeServerUrl as SERVER_DATABASE_URL,
-  maybeUserUrl as USER_DATABASE_URL,
+  SERVER_DATABASE_URL,
+  USER_DATABASE_URL,
+  ROLL_URL,
+  ROLL_PORT,
+  ROLL_PATH,
 };
