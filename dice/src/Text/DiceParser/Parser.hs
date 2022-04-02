@@ -112,14 +112,14 @@ notFollowedBy want dontWant = want <* ((dontWant >> fail "not followed by") <|> 
 
 partialNumTest :: Maybe Char -> Parser PartialNumTest
 partialNumTest postfix =
-  (eq postfix $> EqTest TestEq <?> "TestEq")
-    <|> (withP "/=" $> EqTest TestNeq <?> "TestNeq")
+  (withP "/=" $> EqTest TestNeq <?> "TestNeq")
     <|> (withP "<=" $> OrdTest TestLeq)
     <|> (withP "<" $> OrdTest TestLes)
     <|> (withP ">=" $> OrdTest TestGeq)
     <|> (withP ">" $> OrdTest TestGre)
     <|> (withP "In" $> IntervalTest TestIn)
     <|> (withP "Out" $> IntervalTest TestOut)
+    <|> (eq postfix $> EqTest TestEq <?> "TestEq")
   where
     eq = maybe (void "==") (void <$> A.char)
     makeP (Just p) = (A.char p *>)
@@ -170,8 +170,8 @@ table =
       | (Left n1) <- extractor node1, (Left n2) <- extractor node2 = maker n1 $ n2 :| []
       | (Left n) <- extractor node1, (Right (la, lb :| ls)) <- extractor node2 = maker n $ la :| lb : ls
       -- Should attempt to avoid these cases; maybe use trace to ensure they aren't hit
-      | (Right (la, ls)) <- extractor node1, (Left n) <- extractor node2 = trace "M3Branch" $ maker la $ ls <> [n]
-      | (Right (l1a, l1s)) <- extractor node1, (Right (l2a, l2s)) <- extractor node2 = trace "M4Branch" $ maker l1a $ l1s <> [l2a] <> l2s
+      | (Right (la, ls)) <- extractor node1, (Left n) <- extractor node2 = maker la $ ls <> [n]
+      | (Right (l1a, l1s)) <- extractor node1, (Right (l2a, l2s)) <- extractor node2 = maker l1a $ l1s <> [l2a] <> l2s
     extractAnd (AndNode a as) = Right (a, as)
     extractAnd n = Left n
     extractOr (OrNode a as) = Right (a, as)
@@ -181,8 +181,8 @@ table =
     extractAdd (AddNode a as) = Right (a, as)
     extractAdd n = Left n
     -- Dont want to hit these first two
-    divFn (MultNode l1 l1s) (MultNode l2 l2s) = trace "D1Branch" $ MultNode l1 $ l1s <> [RecipNode l2] <> l2s
-    divFn (MultNode l ls) n = trace "D2Branch" $ MultNode l $ ls <> [RecipNode n]
+    divFn (MultNode l1 l1s) (MultNode l2 l2s) = MultNode l1 $ l1s <> [RecipNode l2] <> l2s
+    divFn (MultNode l ls) n = MultNode l $ ls <> [RecipNode n]
     divFn n (MultNode l ls) = MultNode n $ [RecipNode l] <> ls
     divFn n1 n2 = MultNode n1 [RecipNode n2]
     subFn (AddNode l1 l1s) (AddNode l2 l2s) = AddNode l1 $ l1s <> [NegativeNode l2] <> l2s

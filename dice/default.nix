@@ -1,18 +1,24 @@
-{ mkDerivation, base, ghc, hashable, HUnit, integer-roots, lib
-, megaparsec, mtl, parser-combinators, QuickCheck, random, relude
-, text, unordered-containers
+{ mkDerivation, aeson, attoparsec, base, ghc, hashable, hspec
+, hspec-contrib, hspec-discover, integer-roots, lib, mtl
+, parser-combinators, QuickCheck, random, relude, scotty, text
+, unordered-containers
 }:
 mkDerivation {
   pname = "rpdiscorddice";
   version = "0.1.0.0";
   src = ./.;
-  isLibrary = false;
+  isLibrary = true;
   isExecutable = true;
-  executableHaskellDepends = [
-    base ghc hashable HUnit integer-roots megaparsec mtl
-    parser-combinators QuickCheck random relude text
-    unordered-containers
+  libraryHaskellDepends = [
+    attoparsec base ghc hashable integer-roots mtl parser-combinators
+    random relude text unordered-containers
   ];
+  executableHaskellDepends = [ aeson base random relude scotty ];
+  testHaskellDepends = [
+    attoparsec base hspec hspec-contrib integer-roots
+    parser-combinators QuickCheck random relude text
+  ];
+  testToolDepends = [ hspec-discover ];
   license = "unknown";
   hydraPlatforms = lib.platforms.none;
 }
