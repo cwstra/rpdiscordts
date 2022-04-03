@@ -33,7 +33,7 @@ toResult input (Left errorMessage) = JSONFailure {errorMessage, input}
 toResult input (Right (result, history)) = JSONSuccess {input, history, result}
 
 main :: IO ()
-main = Scotty.scotty 3000 $
+main = Scotty.scotty 4935 $
   Scotty.get "/roll" $ do
     input <- Scotty.param "roll"
     seed <- Scotty.param "seed"
