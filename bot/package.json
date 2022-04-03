@@ -17,6 +17,7 @@
     "dotenv": "^16.0.0",
     "dotenv-cli": "^5.0.0",
     "fp-ts": "^2.11.5",
+    "fuzzysort": "^1.2.1",
     "monocle-ts": "^2.3.11",
     "rambda": "^6.9.0",
     "rxjs": "^7.5.5",

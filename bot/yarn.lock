@@ -3005,6 +3005,11 @@ funtypes@^4.1.0:
   resolved "https://registry.yarnpkg.com/funtypes/-/funtypes-4.1.0.tgz#a347c475a0e9f51f090d31f4912f2dc3f86f8284"
   integrity sha512-VFAgeQPjHd8vpLNSxEZjU32jnthnXLE0SVHkNFpEAzXvFNKwjCV83vqVXpt/JFE9sNHh/hz16xywjkXXSsoHZQ==
 
+fuzzysort@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/fuzzysort/-/fuzzysort-1.2.1.tgz#ea23d3c4d7726422888f538044fcea265644d54c"
+  integrity sha512-egTSF3U6H6T9tXtAhEm5P5guSSDjd96/NUWrbmoGlIu3ATMdXra13gwQdEFRY6ehsFe8xec7UnQz+k34CGWCIg==
+
 gauge@~2.7.3:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/gauge/-/gauge-2.7.4.tgz#2c03405c7538c39d7eb37b317022e325fb018bf7"
