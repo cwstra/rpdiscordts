@@ -221,11 +221,14 @@ limit ${count ?? 5}`),
                     ...(strong.length
                       ? [
                           "Strong results:",
-                          strong.map(({ id }) => id).join("\n"),
+                          strong.map(({ id }) => `\t${id}`).join("\n"),
                         ]
                       : []),
                     ...(weak.length
-                      ? ["Weak results:", weak.map(({ id }) => id).join("\n")]
+                      ? [
+                          "Weak results:",
+                          weak.map(({ id }) => `\t${id}`).join("\n"),
+                        ]
                       : []),
                   ];
                   await wrapped.editReply({
