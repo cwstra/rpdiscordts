@@ -6,7 +6,7 @@ import * as E from "fp-ts/Either";
 import * as T from "fp-ts/Task";
 import * as TE from "fp-ts/TaskEither";
 import * as TO from "fp-ts/TaskOption";
-import { splitEvery } from "rambda";
+import { splitEvery, splitWhen } from "rambda";
 import { checkForGuildAndMember } from "../helpers/commands";
 import { isKeyOf } from "../helpers/general";
 import { sendPaginatedEmbeds } from "../helpers/paginator";
@@ -173,7 +173,6 @@ module.exports = {
         );
       }),
     }),
-    /*
     makeCommand({
       name: "top",
       description:
@@ -184,6 +183,11 @@ module.exports = {
           description: "The entry title text to search for.",
           required: true,
         },
+        count: {
+          type: "number",
+          description: "The number of top entries to return; defaults to 5.",
+          required: false,
+        },
       },
       execute: wrappedTask((args) => {
         return pipe(
@@ -192,67 +196,44 @@ module.exports = {
           TE.chainFirst(({ wrapped }) =>
             TE.fromTask(() => wrapped.deferReply())
           ),
-          TE.bind("fields", ({ options: { selected_fields } }) =>
-            TE.of(selected_fields?.split(/\s+/))
-          ),
           TE.bind("codexPrefix", getCodexPrefix),
           TE.bindW("tableId", ({ codexPrefix }) =>
             pipe(lookup_view(codexPrefix), TE.of)
           ),
-          TE.chain(({ interaction, wrapped, tableId, options: { entry } }) =>
+          TE.chain(({ wrapped, tableId, options: { entry, count } }) =>
             pipe(
-              () =>
-                Server.db.query(sql`
-              select embed
+              TE.tryCatch(
+                (): Promise<{ id: string; strong: unknown }[]> =>
+                  Server.db.query(sql`
+              select id, id % ${entry} as strong
               from ${tableId}
-              where id % ${entry}
               order by id <-> ${entry}
-              limit 1`),
-              T.map(
-                E.fromPredicate(
-                  (data) => !!data.length,
-                  () => `Sorry, I couldn't find a match for ${entry}.`
-                )
+limit ${count ?? 5}`),
+                () => "Top query failed"
               ),
-              TE.map(([{ embed }]) =>
-                "extra_fields" in embed
-                  ? {
-                      ...embed.init,
-                      fields: trace(
-                        embed.extra_fields.flatMap((o: object) =>
-                          Object.values(o)
-                        )
-                      ),
-                    }
-                  : embed
-              ),
-              TE.chain((embed) =>
+              TE.chain((results) =>
                 TE.fromTask(async () => {
-                  const sanitizedFields = embed.fields
-                    ? (
-                        embed.fields as { name: string; value: string }[]
-                      ).flatMap((field) =>
-                        field.value.length > 1024
-                          ? splitString(field.value, 1024).map((value, i) => ({
-                              name: `${field.name} p.${i + 1}`,
-                              value,
-                            }))
-                          : [field]
-                      )
-                    : undefined;
-                  const embeds =
-                    !sanitizedFields || sanitizedFields.length < 4
-                      ? [embed]
-                      : splitEvery(3, sanitizedFields).map((fields) => ({
-                          ...embed,
-                          fields,
-                        }));
-                  if (embeds.length > 1)
-                    await sendPaginatedEmbeds({
-                      interaction,
-                      embeds,
-                    });
-                  else await wrapped.editReply({ embeds: [embed] });
+                  const [strong, weak] = splitWhen(
+                    (r: typeof results[number]) => !r.strong,
+                    results
+                  );
+                  const sections = [
+                    ...(strong.length
+                      ? [
+                          "Strong results:",
+                          strong.map(({ id }) => id).join("\n"),
+                        ]
+                      : []),
+                    ...(weak.length
+                      ? ["Weak results:", weak.map(({ id }) => id).join("\n")]
+                      : []),
+                  ];
+                  await wrapped.editReply({
+                    content: `Top ${count ?? 5} results for ${entry}:
+\`\`\`
+${sections.join("\n")}
+\`\`\``,
+                  });
                 })
               )
             )
@@ -262,6 +243,6 @@ module.exports = {
           })
         );
       }),
-    }),*/
+    }),
   ],
 };
