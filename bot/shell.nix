@@ -5,7 +5,7 @@ in pkgs.mkShell rec {
 
   shellHook = ''
     set -o allexport
-    source ../.env
+    source .env
     set +o allexport
   '';
   buildInputs = with pkgs; [
