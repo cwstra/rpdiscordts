@@ -1,11 +1,12 @@
-let pkgs = import <nixpkgs> {};
-
+let
+  pkgs = import <nixpkgs> {};
+  currentPath = builtins.toString ./.;
 in pkgs.mkShell rec {
   name = "rpdiscordts";
 
   shellHook = ''
     set -o allexport
-    source .env
+    . ${currentPath}/.env
     set +o allexport
   '';
   buildInputs = with pkgs; [
