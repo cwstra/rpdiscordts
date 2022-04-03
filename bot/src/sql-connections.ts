@@ -63,7 +63,7 @@ export namespace Server {
     ptu_hi: tableMaker<ServerPTUHISchema>({
       serializeValue: serializeServerPTUHIValue,
     }),
-    zelda: tableMaker<ServerZeldaSchema>({
+    zelda_rw: tableMaker<ServerZeldaSchema>({
       serializeValue: serializeServerZeldaValue,
     }),
   };
