@@ -223,7 +223,7 @@ module.exports = makeCommand({
                               creator.displayName
                             }, has ${
                               attributes.length
-                                ? "the following attributes:\n${tripleBackTick}\n" +
+                                ? `the following attributes:\n${tripleBackTick}\n` +
                                   attributes.map((a) => a.name).join("\n") +
                                   tripleBackTick
                                 : "no attributes"
