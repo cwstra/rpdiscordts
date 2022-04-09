@@ -57,8 +57,8 @@ module.exports = makeCommand({
               T.map(O.fromNullable),
               TO.map(({ charseps, charsigns }) => ({
                 server_id,
-                charseps: compact(charseps),
-                charsigns: compact(charsigns),
+                charseps: compact(charseps ?? [":"]),
+                charsigns: compact(charsigns ?? ["$"]),
               }))
             )
           ),
