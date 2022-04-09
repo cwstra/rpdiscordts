@@ -3,7 +3,7 @@ import {
   MessageSelectOptionData,
   Permissions,
 } from "discord.js";
-import { makeCommand, makeSubCommands } from "../make-command";
+import { makeCommand } from "../make-command";
 import { fetchSharedEntry, User } from "../sql-connections";
 import { makeMessageActions } from "../make-message-actions";
 import {
@@ -26,51 +26,19 @@ import * as TE from "fp-ts/TaskEither";
 import { evolve } from "fp-ts/lib/struct";
 import { ensureTask } from "../helpers/task";
 
-const settingGroup = (target: "server" | "channel") => ({
-  description: `Check or change ${target} settings`,
-  subCommands: makeSubCommands({
-    charsign: {
-      description: `Check or change the current ${target} charsign for roll queries`,
-      options: {
-        charsign: {
-          type: "string",
-          description: `If given, set the ${target}'s charsign to this symbol. Otherwise, get the ${target}'s current charsign.`,
-          required: false,
-        },
-      },
-    },
-    charsep: {
-      description: `Check or change the current ${target}'s charsep for roll queries`,
-      options: {
-        charsep: {
-          type: "string",
-          description: `If given, set the ${target}'s charsep to this symbol. Otherwise, get the ${target}'s current charsep.`,
-          required: false,
-        },
-      },
-    },
-    codex: {
-      description: `Check or change the current ${target}'s lookup codex.`,
-    },
-    ephemeral: {
-      description: `Toggle ephemeral replies in the current ${target}.`,
-    },
-    freeze_on_close: {
-      description: `Toggle paginator freezing in the current ${target}.`,
-    },
-    inline: {
-      description: `Toggle inline rolling in the current ${target}.`,
-    },
-  }),
-});
+const targetOption = {
+  type: "string" as const,
+  description: `The target of the settings modification.`,
+  required: true as const,
+  choices: [
+    ["Channel", "channel"],
+    ["Server", "server"],
+  ] as [name: string, value: "channel" | "server"][],
+};
 
 module.exports = makeCommand({
   name: "settings",
   description: "Check or change bot settings",
-  subcommandGroups: {
-    server: settingGroup("server"),
-    channel: settingGroup("channel"),
-  },
   subcommands: {
     bot_mod_roles: {
       description:
@@ -81,6 +49,48 @@ module.exports = makeCommand({
           description: "Optional. Role to add or remove.",
           required: false,
         },
+      },
+    },
+    charsign: {
+      description: "Check or change the charsign for roll queries",
+      options: {
+        target: targetOption,
+        charsign: {
+          type: "string",
+          description:
+            "If given, set the target's charsign to this symbol. Otherwise, get the target's current charsign.",
+          required: false,
+        },
+      },
+    },
+    charsep: {
+      description: "Check or change the charsep for roll queries",
+      options: {
+        target: targetOption,
+        charsep: {
+          type: "string",
+          description:
+            "If given, set the target's charsep to this symbol. Otherwise, get the target's current charsep.",
+          required: false,
+        },
+      },
+    },
+    codex: {
+      description: "Check or change the lookup codex.",
+      options: {
+        target: targetOption,
+      },
+    },
+    ephemeral: {
+      description: "Toggle ephemeral replies.",
+      options: {
+        target: targetOption,
+      },
+    },
+    freeze_on_close: {
+      description: "Toggle paginator freezing.",
+      options: {
+        target: targetOption,
       },
     },
   },
@@ -160,7 +170,7 @@ module.exports = makeCommand({
             }
             case "charsep":
             case "charsign": {
-              const target = options.group;
+              const target = options.options.target;
               const { guild, channel } = interaction;
               const opposite =
                 subCommand === "charsign" ? "charsep" : "charsign";
@@ -230,7 +240,7 @@ module.exports = makeCommand({
               );
             }
             case "codex": {
-              const target = options.group;
+              const target = options.options.target;
               const { guild, channel } = interaction;
               return pipe(
                 () => fetchSharedEntry(target, guild.id, channel?.id),
@@ -352,7 +362,7 @@ module.exports = makeCommand({
               );
             }
             case "freeze_on_close": {
-              const target = options.group;
+              const target = options.options.target;
               const { guild, channel } = interaction;
               return pipe(
                 () => fetchSharedEntry(target, guild.id, channel?.id),
@@ -387,6 +397,7 @@ module.exports = makeCommand({
                 (t) => TE.fromTask(t)
               );
             }
+            /*
             case "inline": {
               const target = options.group;
               const { guild, channel } = interaction;
@@ -420,9 +431,9 @@ module.exports = makeCommand({
                 }),
                 (t) => TE.fromTask(t)
               );
-            }
+            }*/
             case "ephemeral": {
-              const target = options.group;
+              const target = options.options.target;
               const { guild, channel } = interaction;
               return pipe(
                 () => fetchSharedEntry(target, guild.id, channel?.id),

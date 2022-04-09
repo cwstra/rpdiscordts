@@ -184,7 +184,7 @@ module.exports = {
           required: true,
         },
         count: {
-          type: "number",
+          type: "integer",
           description: "The number of top entries to return; defaults to 5.",
           required: false,
         },

@@ -59,7 +59,7 @@ module.exports = makeCommand({
     rename: {
       description: "Change an existing character's name.",
       options: {
-        name: {
+        old_name: {
           type: "string",
           description: "The name of the character.",
           required: true,
@@ -131,7 +131,7 @@ module.exports = makeCommand({
                   })
               ),
               TE.chain(([newChar]) => {
-                const entries = Object.entries(attributes).filter(
+                const entries = Object.values(attributes.toUpsert ?? {}).filter(
                   (e): e is [string, string] => !!e[1]
                 );
                 if (!entries.length)
@@ -235,9 +235,9 @@ module.exports = makeCommand({
             );
           }
           case "rename": {
-            const { name, new_name } = options.options;
+            const { old_name, new_name } = options.options;
             return pipe(
-              getExistingCharacter({ name, interaction }),
+              getExistingCharacter({ name: old_name, interaction }),
               adminGuard(interaction),
               TE.chain((currentCharacter) =>
                 pipe(
@@ -259,10 +259,12 @@ module.exports = makeCommand({
                       .update({ character_id }, { character_name: new_name }),
                   sanitizeTask(
                     () =>
-                      `Hm. Something went wrong while renaming \`${name}\` to \`${new_name}\`. Maybe try again?`
+                      `Hm. Something went wrong while renaming \`${old_name}\` to \`${new_name}\`. Maybe try again?`
                   ),
                   TE.chain(() =>
-                    TE.left(`Character \`${name}\` renamed to \`${new_name}\`!`)
+                    TE.left(
+                      `Character \`${old_name}\` renamed to \`${new_name}\`!`
+                    )
                   )
                 )
               )
