@@ -65,8 +65,8 @@ module.exports = makeCommand({
           TO.chainTaskK(({ server_id, charseps, charsigns }) => {
             const [prefix, ...rest] = midStringCharacters(
               a.options.expression,
-              charseps,
-              charsigns
+              charsigns,
+              charseps
             );
             return pipe(
               () =>
