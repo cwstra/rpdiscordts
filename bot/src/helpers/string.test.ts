@@ -1,5 +1,5 @@
 import * as fc from "fast-check";
-import { extractCharacters } from "./string";
+import { extractCharacters, parseAttributes } from "./string";
 
 const stringWithout = (
   excluded: string[],
@@ -22,7 +22,8 @@ describe("extractCharacters", () => {
             stringWithout(["$", ":"])
           )
         ),
-        (firstStr, rest) => {
+        fc.context(),
+        (firstStr, rest, ctx) => {
           const fullStr =
             firstStr +
             rest
@@ -31,6 +32,7 @@ describe("extractCharacters", () => {
               )
               .join("");
           const result = extractCharacters(fullStr, ["$"], [":"]);
+          ctx.log(fullStr);
           expect(result).toEqual(rest.map(([c]) => c));
         }
       )
@@ -39,26 +41,33 @@ describe("extractCharacters", () => {
     fc.assert(
       fc.property(
         fc
-          .set(fc.string({ minLength: 1 }), { minLength: 2, maxLength: 20 })
+          .set(stringWithout([" "], { minLength: 1 }), {
+            minLength: 2,
+            maxLength: 20,
+          })
           .chain((mixedSymbols) => {
             const filtered = mixedSymbols.filter((s1) =>
               mixedSymbols.every((s2) => s1 === s2 || !s2.includes(s1))
             );
-            const strGen = stringWithout(filtered);
+            const sanitized = filtered.length < 2 ? ["$", ":"] : filtered;
+            const strGen = stringWithout(sanitized, { minLength: 1 });
             return fc
-              .integer({ min: 1, max: filtered.length - 1 })
-              .chain((splitIndex) => {
-                const signs = filtered.slice(0, splitIndex);
-                const seps = filtered.slice(splitIndex);
-                return fc.tuple(
-                  fc.constant(signs),
-                  fc.constant(seps),
-                  strGen,
-                  fc.array(fc.tuple(character(strGen), strGen))
-                );
-              });
+              .integer({ min: 1, max: sanitized.length - 1 })
+              .map((splitIndex) => ({
+                signs: sanitized.slice(0, splitIndex),
+                seps: sanitized.slice(splitIndex),
+              }))
+              .chain(({ signs, seps }) =>
+                fc.record({
+                  signs: fc.constant(signs),
+                  seps: fc.constant(seps),
+                  firstStr: strGen,
+                  rest: fc.array(fc.tuple(character(strGen), strGen)),
+                })
+              );
           }),
-        ([signs, seps, firstStr, rest]) => {
+        fc.context(),
+        ({ signs, seps, firstStr, rest }, ctx) => {
           const fullStr =
             firstStr +
             rest
@@ -71,9 +80,36 @@ describe("extractCharacters", () => {
                   }${nextStr}`
               )
               .join("");
+          ctx.log(fullStr);
           const result = extractCharacters(fullStr, signs, seps);
           expect(result).toEqual(rest.map(([c]) => c));
         }
       )
+    ));
+});
+
+const re = /["\s=\\]/;
+const printStr = (str: string) =>
+  re.test(str) ? `"${str.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"` : str;
+const printDictionary = (dict: Record<string, string | null>) =>
+  Object.entries(dict)
+    .map(([key, value]) =>
+      value === null ? printStr(key) : `${printStr(key)}=${printStr(value)}`
+    )
+    .join(" ");
+
+describe("parseAttributes", () => {
+  it("undoes printDictionary", () =>
+    fc.assert(
+      fc.property(
+        fc.dictionary(fc.string({ minLength: 1 }), fc.string({ minLength: 1 })),
+        fc.context(),
+        (dict, ctx) => {
+          const printed = printDictionary(dict);
+          ctx.log(printed);
+          expect(parseAttributes(printed)).toEqual(dict);
+        }
+      ),
+      { numRuns: 1000 }
     ));
 });

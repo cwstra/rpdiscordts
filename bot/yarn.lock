@@ -5647,6 +5647,11 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
+typescript-parsec@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/typescript-parsec/-/typescript-parsec-0.3.2.tgz#bcaea1d0a892e7c08a20403772592b89d8604920"
+  integrity sha512-gmjYQBXsF7Rm3KHOv1zajh/xkFrV+53CQImy0MkUsDcS9VOV2K6q7d+zDbcOOFY0m4Or9SJwUzIQ4wealLCCkQ==
+
 typescript@^4.5.2:
   version "4.5.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.5.2.tgz#8ac1fba9f52256fdb06fb89e4122fa6a346c2998"

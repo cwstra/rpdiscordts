@@ -1,6 +1,17 @@
 import { zipWith } from "fp-ts/lib/Array";
-import { splitEvery } from "rambda";
+import { fromPairs, splitEvery } from "rambda";
 import { last } from "./array";
+import {
+  alt,
+  apply,
+  rep_sc,
+  tok as genTok,
+  seq,
+  buildLexer,
+  list_sc,
+  expectSingleResult,
+  expectEOF,
+} from "typescript-parsec";
 
 const reEscape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -60,3 +71,52 @@ export const trimmedMultiLine = (
   ].join("");
   return wholeString.replace(/\s*\n\s*/g, (s) => s.replace(/[^\n]/g, ""));
 };
+
+export const parseAttributes = (() => {
+  type TokenKind = "simple" | "escaped" | "quote" | "eq" | "space";
+  const lexer = buildLexer<TokenKind>([
+    [true, /^[^\\"=\s]+/g, "simple"],
+    [true, /^\\./g, "escaped"],
+    [true, /^"/g, "quote"],
+    [true, /^=/g, "eq"],
+    [true, /^\s+/g, "space"],
+  ]);
+  const tok = (toMatch: TokenKind) => genTok(toMatch);
+  const simple = apply(tok("simple"), (t) => t.text);
+  const escaped = apply(tok("escaped"), (t) =>
+    ['"', "\\"].includes(t.text[1]) ? t.text[1] : t.text
+  );
+  const quoted = apply(
+    seq(
+      tok("quote"),
+      apply(
+        rep_sc(
+          alt(
+            simple,
+            escaped,
+            apply(tok("eq"), () => "="),
+            apply(tok("space"), (s) => s.text)
+          )
+        ),
+        (strs) => strs.join("")
+      ),
+      tok("quote")
+    ),
+    ([, str]) => str
+  );
+  const identifier = alt(quoted, simple);
+  const pair = apply(
+    seq(identifier, tok("eq"), identifier),
+    ([name, , value]): [string, string | null] => [name, value]
+  );
+  const single = apply(identifier, (id): [string, string | null] => [id, null]);
+  const sequence = apply(list_sc(alt(pair, single), tok("space")), (pairs) =>
+    fromPairs(pairs)
+  );
+  return (expr: string): Record<string, string | null> => {
+    const trimmed = expr.trim();
+    return trimmed
+      ? expectSingleResult(expectEOF(sequence.parse(lexer.parse(trimmed))))
+      : {};
+  };
+})();
