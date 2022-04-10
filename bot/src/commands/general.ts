@@ -48,6 +48,28 @@ module.exports = {
         }),
       }),
     makeCommand({
+      name: "init",
+      description: "Sends a todo list of what to do on first inviting the bot.",
+      execute: wrappedExecute(async ({ interaction, wrapped }) => {
+        await wrapped.reply(
+          [
+            `Hello ${
+              (interaction.member &&
+                "guild" in interaction.member &&
+                interaction.member.nickname) ||
+              interaction.user.username
+            }!`,
+            "",
+            "I use slash commands, so to see what's available, just type `/` in your message text box!",
+            "",
+            "To set me up for further use in your server, an admin can use the `/settings` commands to pick your codex, toggle ephemeral replies, set up botmod roles, and more!",
+            "",
+            "To learn more, use `/docs` to get a link to my documentation.",
+          ].join("\n")
+        );
+      }),
+    }),
+    makeCommand({
       name: "invite",
       description: "Sends a link to invite the bot to other servers.",
       execute: wrappedExecute(async ({ interaction, wrapped }) => {

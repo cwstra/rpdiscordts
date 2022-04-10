@@ -208,7 +208,7 @@ module.exports = {
               select id, id % ${entry} as strong
               from ${tableId}
               order by id <-> ${entry}
-limit ${count ?? 5}`),
+              limit ${count ?? 5}`),
                 () => "Top query failed"
               ),
               TE.chain((results) =>
