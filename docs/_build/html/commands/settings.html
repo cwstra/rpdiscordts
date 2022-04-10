@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Settings &#8212; rpdiscordts  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Dice Reference" href="../dice_reference/index.html" />
+    <link rel="prev" title="Roll" href="roll.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="settings">
+<span id="id1"></span><h1>Settings<a class="headerlink" href="#settings" title="Permalink to this headline">¶</a></h1>
+<p>The <cite>settings</cite> command allows the user to configure the bot on a per-server or per-channel basis. Each subcommand controls a specific setting.</p>
+<section id="bot-mod-roles">
+<span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">bot_mod_roles</span></code><a class="headerlink" href="#bot-mod-roles" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">/settings</span> <span class="pre">bot_mod_roles</span></code> gets or sets the roles that are allowed to change the bot’s settings on the server; this is the only setting that cannot be altered on a per-channel basis.</p>
+<dl class="simple">
+<dt>Options:</dt><dd><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">role</span></code>:</dt><dd><p>Optional. If provided, the role to add or remove to the list of bot mods. If not provided, the command instead returns a list of all bot mod roles.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p id="charsep"><span id="charsign"></span><code class="docutils literal notranslate"><span class="pre">charsign</span></code>
+<code class="docutils literal notranslate"><span class="pre">charsep</span></code>
+————————</p>
+<p><code class="docutils literal notranslate"><span class="pre">/settings</span> <span class="pre">charsign</span></code> and <code class="docutils literal notranslate"><span class="pre">/settings</span> <span class="pre">charsep</span></code> get or set their respective symbols in the channel or server. See Dice Reference for how to use charsign and charsep to embed character data in a roll.</p>
+<dl class="simple">
+<dt>Options:</dt><dd><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">target</span></code>:</dt><dd><p>Required. Either <code class="docutils literal notranslate"><span class="pre">channel</span></code> or <code class="docutils literal notranslate"><span class="pre">server</span></code>. If <code class="docutils literal notranslate"><span class="pre">channel</span></code>, the symbol will be checked or set in the channel the command was issued in; if <code class="docutils literal notranslate"><span class="pre">server</span></code>, the server.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">charsign</span></code>/ <code class="docutils literal notranslate"><span class="pre">charsep</span></code>:</dt><dd><p>Optional. If given, set the target symbol’s value; otherwise, simply check it.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="codex">
+<span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">codex</span></code><a class="headerlink" href="#codex" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">/settings</span> <span class="pre">codex</span></code> gets or sets the server or channel’s codex. After typing the command, a list of available codexes will be provided, which can be selected via the a select menu.</p>
+<dl class="simple">
+<dt>Options:</dt><dd><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">target</span></code>:</dt><dd><p>Required. Either <code class="docutils literal notranslate"><span class="pre">channel</span></code> or <code class="docutils literal notranslate"><span class="pre">server</span></code>. If <code class="docutils literal notranslate"><span class="pre">channel</span></code>, the codex change will be targeted to the channel the command was issued in; if <code class="docutils literal notranslate"><span class="pre">server</span></code>, the server.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="ephemeral">
+<span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">ephemeral</span></code><a class="headerlink" href="#ephemeral" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">/settings</span> <span class="pre">ephemeral</span></code> toggles whether command messages will be ‘ephemeral’ or not. Ephemeral messages will only be visible to the user who sent the command.</p>
+<dl class="simple">
+<dt>Options:</dt><dd><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">target</span></code>:</dt><dd><p>Required. Either <code class="docutils literal notranslate"><span class="pre">channel</span></code> or <code class="docutils literal notranslate"><span class="pre">server</span></code>. If <code class="docutils literal notranslate"><span class="pre">channel</span></code>, the ephemeral setting will be targeted to the channel the command was issued in; if <code class="docutils literal notranslate"><span class="pre">server</span></code>, the server.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="freeze-on-close">
+<span id="freeze"></span><h2><code class="docutils literal notranslate"><span class="pre">freeze_on_close</span></code><a class="headerlink" href="#freeze-on-close" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">/settings</span> <span class="pre">freeze_on_close</span></code> toggles whether paginator results will be frozen when they time out, or just deleted.</p>
+<dl class="simple">
+<dt>Options:</dt><dd><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">target</span></code>:</dt><dd><p>Required. Either <code class="docutils literal notranslate"><span class="pre">channel</span></code> or <code class="docutils literal notranslate"><span class="pre">server</span></code>. If <code class="docutils literal notranslate"><span class="pre">channel</span></code>, the frozen setting will be targeted to the channel the command was issued in; if <code class="docutils literal notranslate"><span class="pre">server</span></code>, the server.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">rpdiscordts</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Command Pages</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="character.html">Character</a></li>
+<li class="toctree-l2"><a class="reference internal" href="general.html">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ref.html">Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roll.html">Roll</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../dice_reference/index.html">Dice Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../privacy.html">Privacy</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Command Pages</a><ul>
+      <li>Previous: <a href="roll.html" title="previous chapter">Roll</a></li>
+      <li>Next: <a href="../dice_reference/index.html" title="next chapter">Dice Reference</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;1980, Corin (CWStra).
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/commands/settings.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

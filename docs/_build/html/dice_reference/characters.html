@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Using Characters in Dice &#8212; rpdiscordts  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Privacy" href="../privacy.html" />
+    <link rel="prev" title="Functions" href="functions.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="using-characters-in-dice">
+<span id="characters"></span><h1>Using Characters in Dice<a class="headerlink" href="#using-characters-in-dice" title="Permalink to this headline">¶</a></h1>
+<p>Information stored in characters can be used in roll commands, using charsigns and charseps.</p>
+<p>First, to successfully use a character attribute in a dice roll, it should already be a properly formatted dice string, as the attribute value will be inserted into the string to create the rolled dice pool.</p>
+<p>Each server or channel will have charsigns and charseps. By default, the charsign is <cite>$</cite>, and the charsep is <cite>:</cite>. To use a character attribute in a roll, join together the character’s name and the attribute name with the charsep, and surround the whole thing with the charsign.</p>
+<p>For example, if <cite>Jim the Test Muffin</cite> has a <cite>Wisdom</cite> attribute with a value of <cite>5d6</cite>, we can roll that dice pool by typing</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$Jim the Test Muffin:Wisdom$
+</pre></div>
+</div>
+<p>as our roll query.</p>
+<p>This is equivalent to</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">5</span><span class="n">d6</span>
+</pre></div>
+</div>
+<p>This can be augmented with other information; for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$Jim the Test Muffin:Wisdom$+5
+</pre></div>
+</div>
+<p>is equivalent to</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">5</span><span class="n">d6</span><span class="o">+</span><span class="mi">5</span>
+</pre></div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">rpdiscordts</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Command Pages</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Dice Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resolution.html">Resolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#format">Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dice-functions">Dice Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#logical-functions">Logical Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#numeric-functions">Numeric Functions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Using Characters in Dice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../privacy.html">Privacy</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Dice Reference</a><ul>
+      <li>Previous: <a href="functions.html" title="previous chapter">Functions</a></li>
+      <li>Next: <a href="../privacy.html" title="next chapter">Privacy</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;1980, Corin (CWStra).
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/dice_reference/characters.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

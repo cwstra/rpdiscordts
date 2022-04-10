@@ -1,0 +1,794 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Functions &#8212; rpdiscordts  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using Characters in Dice" href="characters.html" />
+    <link rel="prev" title="Resolution" href="resolution.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="functions">
+<span id="id1"></span><h1>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="format">
+<span id="function-format"></span><h1>Format<a class="headerlink" href="#format" title="Permalink to this headline">¶</a></h1>
+<p>Functions are displayed as follows:</p>
+<section id="sample-function-name">
+<span id="sample-function"></span><h2>Sample Function Name<a class="headerlink" href="#sample-function-name" title="Permalink to this headline">¶</a></h2>
+<p>A brief description of the function will be displayed here.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Basic</span> <span class="n">usage</span> <span class="n">syntax</span> <span class="n">will</span> <span class="n">be</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">bar</span> <span class="n">like</span> <span class="n">this</span>
+</pre></div>
+</div>
+<p>Operator Type:
+Operators can be infix, prefix, postfix, or functional. The -fix types also have precedence, which will be listed alongside the type. Higher precedence operators are resolved first.</p>
+<p>Operands:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>The first operand’s function will be described here</dt><dd><ul>
+<li><dl class="simple">
+<dt>Valid Types:</dt><dd><ul>
+<li><p>Valid input types will be listed in a sublist,</p></li>
+<li><p>like this one. Sometime, additional restrictions will also be listed</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Then we’ll move onto the second operand, and so on</dt><dd><ul>
+<li><dl class="simple">
+<dt>Valid Types:</dt><dd><ul>
+<li><p>If a function is overloaded, some additional information</p></li>
+<li><p>may be displayed in these sublists</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+</section>
+<section id="dice-functions">
+<span id="id2"></span><h1>Dice Functions<a class="headerlink" href="#dice-functions" title="Permalink to this headline">¶</a></h1>
+<p>The following commands allow the creation or manipulation of dice.</p>
+<section id="dice-creation-d">
+<span id="d-function"></span><h2>Dice Creation ( <code class="docutils literal notranslate"><span class="pre">d</span></code> )<a class="headerlink" href="#dice-creation-d" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>d</cite> function creates new dice pools.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">XdY</span>
+</pre></div>
+</div>
+<p>OR</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dY</span>
+</pre></div>
+</div>
+<p>Operator Type: Prefix 12 or Infix 12</p>
+<p>Operands:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code>: pool number. The resulting die pool will roll this many dice.</p>
+<blockquote>
+<div><ul>
+<li><p>Valid Types:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Integers: Must be greater than zero</p></li>
+<li><p>Dice: Will be evaluated, then, if the result is a positive integer, it will be used as in the above case.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Y</span></code>: dice face. This represents the faces present on each die.</p>
+<blockquote>
+<div><ul>
+<li><p>Valid Types:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Integers: Must be greater than zero. This will return dice with faces from one to <code class="docutils literal notranslate"><span class="pre">Y</span></code>.</p></li>
+<li><p>Dice: Will be evaluated, then, if the result is a positive integer, it will be used as in the above case.</p></li>
+<li><p>Vectors: Must contain only numbers. This will return dice whose faces are the elements of the vector.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="fudge-dice-df">
+<span id="fudge-dice"></span><h2>Fudge Dice ( <code class="docutils literal notranslate"><span class="pre">dF</span></code> )<a class="headerlink" href="#fudge-dice-df" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">dF</span></code> function creates a Fudge dice pool. Fudge dice have three sides: <cite>1</cite>, <cite>0</cite>, and <cite>-1</cite>.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">XdF</span>
+</pre></div>
+</div>
+<p>Operator Type: Postfix 11</p>
+<p>Operands:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code>: pool number. The resulting die pool will roll this many fudge dice.</p>
+<blockquote>
+<div><ul>
+<li><p>Valid Types:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Integers: Must be greater than zero</p></li>
+<li><p>Dice: Will be evaluated, then, if the result is a positive integer, it will be used as in the above case.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="keep-drop-functions-kh-kl-dh-dl">
+<span id="keep-drop"></span><h2>Keep/Drop Functions ( <code class="docutils literal notranslate"><span class="pre">kh</span></code>, <code class="docutils literal notranslate"><span class="pre">kl</span></code>, <code class="docutils literal notranslate"><span class="pre">dh</span></code>, <code class="docutils literal notranslate"><span class="pre">dl</span></code>)<a class="headerlink" href="#keep-drop-functions-kh-kl-dh-dl" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">kh</span></code>, <code class="docutils literal notranslate"><span class="pre">kl</span></code>, <code class="docutils literal notranslate"><span class="pre">dh</span></code>, and <code class="docutils literal notranslate"><span class="pre">dl</span></code> functions all serve similar functions; they modify an existing dice pool to (k)eep or (d)rop either (h)igh or (l)ow dice.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">D</span><span class="p">{</span> <span class="n">kh</span> <span class="o">|</span> <span class="n">kl</span> <span class="o">|</span> <span class="n">dh</span> <span class="o">|</span> <span class="n">dl</span> <span class="p">}</span><span class="n">N</span>
+</pre></div>
+</div>
+<p>Operator Type: Infix 10</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">D</span></code>: The dice pool to modify.</p>
+<blockquote>
+<div><ul>
+<li><p>Valid Types:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Dice. Must have only real faces.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">N</span></code>: The number of high or low dice to keep or drop.</p>
+<blockquote>
+<div><ul>
+<li><p>Valid Types:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Integers: Must be greater than zero</p></li>
+<li><p>Dice: Will be evaluated, then, if the result is a positive integer, it will be used as in the above case.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="reroll-functions-r-and-friends">
+<span id="reroll"></span><h2>Reroll Functions ( <code class="docutils literal notranslate"><span class="pre">r</span></code> and friends)<a class="headerlink" href="#reroll-functions-r-and-friends" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">r</span></code>, <code class="docutils literal notranslate"><span class="pre">r&lt;</span></code>, <code class="docutils literal notranslate"><span class="pre">r&lt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">r&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">r&gt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">rIn</span></code>, and <code class="docutils literal notranslate"><span class="pre">rOut</span></code> functions all modify an existing dice pool, passed as a left argument, to reroll dice that meet a specific predicate:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">r</span></code> rerolls dice that are equal to its right-hand argument</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r&lt;</span></code> rerolls dice that are less than its right-hand argument</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r&lt;=</span></code> rerolls dice that are less than or equal to its right-hand argument</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r&gt;</span></code> rerolls dice that are greater than its right-hand argument</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r&gt;=</span></code> rerolls dice that are greater than or equal to its right-hand argument</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rIn</span></code> rerolls dice that are greater than or equal to the first element of its right hand argument AND less than or equal to the second element of its right-hand argument.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rOut</span></code> rerolls dice that are less than or equal to the first element of its right hand argument OR less than or equal to the second element of its right-hand argument.</p></li>
+</ul>
+<p>If a single dice pool is modified multiple times, rolls that meet the right-most provided stipulation will be rerolled.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">D</span><span class="p">{</span> <span class="n">r</span> <span class="o">|</span> <span class="n">r</span><span class="o">&lt;</span> <span class="o">|</span> <span class="n">r</span><span class="o">&lt;=</span> <span class="o">|</span> <span class="n">r</span><span class="o">&gt;</span> <span class="o">|</span> <span class="n">r</span><span class="o">&gt;=</span> <span class="o">|</span> <span class="n">rIn</span> <span class="o">|</span> <span class="n">rOut</span> <span class="p">}</span><span class="n">N</span>
+</pre></div>
+</div>
+<p>Operator Type: Infix 10</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">D</span></code>: The dice pool to modify.</p>
+<blockquote>
+<div><ul>
+<li><p>Valid Types:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Dice. If the function is not <cite>r</cite>, all sides must be real numbers.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">N</span></code>: The number to test against.</p>
+<blockquote>
+<div><ul>
+<li><p>Valid Types:</p>
+<blockquote>
+<div><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">rIn</span></code> and <code class="docutils literal notranslate"><span class="pre">rOut</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Vector: <code class="docutils literal notranslate"><span class="pre">rIn</span></code> and <code class="docutils literal notranslate"><span class="pre">rOut</span></code> both take a two-element vector of real numbers.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Remaining functions</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Numbers: If the function is <code class="docutils literal notranslate"><span class="pre">r</span></code>, <code class="docutils literal notranslate"><span class="pre">N</span></code> may be any number. Otherwise, <code class="docutils literal notranslate"><span class="pre">N</span></code> must be a real number.</p></li>
+<li><p>Dice: Will be evaluated, then, if the result is a valid number, it will be used as in the above case.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="exploding-functions-and-friends">
+<span id="exploding"></span><h2>Exploding Functions ( <code class="docutils literal notranslate"><span class="pre">!</span></code> and friends)<a class="headerlink" href="#exploding-functions-and-friends" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">!</span></code>, <code class="docutils literal notranslate"><span class="pre">!&lt;</span></code>, <code class="docutils literal notranslate"><span class="pre">!&lt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">!&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">!&gt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">!In</span></code>, <code class="docutils literal notranslate"><span class="pre">!Out</span></code> functions all modify an existing dice pool, passed as a left argument, to have dice explode when they meet a specific predicate:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">!</span></code> can either be an infix or a postfix operator. If it has a right argument, <code class="docutils literal notranslate"><span class="pre">!</span></code> will cause dice to explode when equal to its right argument; otherwise, it will cause dice to explode when equal to the maximum possible face of the die.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!&lt;</span></code> causes dice whose results are less than its right-hand argument to explode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!&lt;=</span></code> causes dice whose results are less than or equal to its right-hand argument to explode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!&gt;</span></code> causes dice whose results are greater than its right-hand argument to explode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!&gt;=</span></code> causes dice whose results are greater than or equal to its right-hand argument to explode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!In</span></code> causes dice whose results are greater than or equal to the first element of its right hand argument AND less than or equal to the second element of its right-hand argument to explode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!Out</span></code> causes dice whose results are less than or equal to the first element of its right hand argument OR less than or equal to the second element of its right-hand argument to explode.</p></li>
+</ul>
+<p>If a single dice pool is modified multiple times, rolls that meet <em>any</em> of the provided stipulations will explode.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>D{ ! | !&lt; | !&lt;= | !&gt; | !&gt;= | !In | !Out }N
+</pre></div>
+</div>
+<p>Operator Type: Infix 10</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">D</span></code>: The dice pool to modify.</p>
+<blockquote>
+<div><ul>
+<li><p>Valid Types:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Dice. If the function is not <code class="docutils literal notranslate"><span class="pre">!</span></code>, all sides must be real numbers.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">N</span></code>: The number to test against.</p>
+<blockquote>
+<div><ul>
+<li><p>Valid Types:</p>
+<blockquote>
+<div><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">!In</span></code> and <code class="docutils literal notranslate"><span class="pre">!Out</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Vector: <code class="docutils literal notranslate"><span class="pre">!In</span></code> and <code class="docutils literal notranslate"><span class="pre">!Out</span></code> both take a two-element vector of real numbers.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Remaining functions</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Numbers: If the function is <code class="docutils literal notranslate"><span class="pre">!</span></code>, <code class="docutils literal notranslate"><span class="pre">N</span></code> may be any number. Otherwise, <code class="docutils literal notranslate"><span class="pre">N</span></code> must be a real number.</p></li>
+<li><p>Dice: Will be evaluated, then, if the result is a valid number, it will be used as in the above case.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="success-comparator-functions-and-friends">
+<span id="success-functions"></span><h2>Success / Comparator Functions ( <code class="docutils literal notranslate"><span class="pre">==</span></code> and friends)<a class="headerlink" href="#success-comparator-functions-and-friends" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">==</span></code>, <code class="docutils literal notranslate"><span class="pre">/=</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">In</span></code>, and <code class="docutils literal notranslate"><span class="pre">Out</span></code> operators serve two functions:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>If their left-hand argument is a die, it will be changed into a success-based pool: all dice that meet the function’s specific qualification will be counted as a success, and otherwise as a failure.</p></li>
+<li><p>If their left-hand argument is not a die, the operator’s arguments will be compared based on the function, and turned into a boolean.</p></li>
+</ul>
+</div></blockquote>
+<p>The operator’s qualifications are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">==</span></code> tests the operands for equality.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/=</span></code> tests the operands for inequality.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;</span></code> takes a real number on the right. If the first operand is less than the second, it returns <code class="docutils literal notranslate"><span class="pre">True</span></code>; otherwise, it returns <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;=</span></code> takes a real number on the right. If the first operand is less than or equal to the second, it returns <code class="docutils literal notranslate"><span class="pre">True</span></code>; otherwise, it returns <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&gt;</span></code> takes a real number on the right. If the first operand is greater than the second, it returns <code class="docutils literal notranslate"><span class="pre">True</span></code>; otherwise, it returns <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&gt;=</span></code> takes a real number on the right. If the first operand is greater than or equal to the second, it returns <code class="docutils literal notranslate"><span class="pre">True</span></code>; otherwise, it returns <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">In</span></code> takes a vector containing two real numbers on the right. If the first operand is within the inclusive range of the vector’s elements, it returns <code class="docutils literal notranslate"><span class="pre">True</span></code>; otherwise, it returns <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Out</span></code> takes a vector containing two real numbers on the right. If the first operand is not within the inclusive range of the vector’s elements, it returns <code class="docutils literal notranslate"><span class="pre">True</span></code>; otherwise, it returns <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+<p>If a single dice pool is modified multiple times, rolls that meet <em>any</em> of the provided stipulations will explode.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="p">{</span> <span class="o">==</span> <span class="o">|</span> <span class="o">/=</span> <span class="o">|</span> <span class="o">&lt;</span> <span class="o">|</span> <span class="o">&lt;=</span> <span class="o">|</span> <span class="o">&gt;</span> <span class="o">|</span> <span class="o">&gt;=</span> <span class="o">|</span> <span class="n">In</span> <span class="o">|</span> <span class="n">Out</span> <span class="p">}</span><span class="n">Y</span>
+</pre></div>
+</div>
+<p>Operator Type: Infix 1</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code></p>
+<blockquote>
+<div><ul>
+<li><p>Valid Types:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Dice: If a die is the left operand, its results will be deemed a success if they would return true under the relevant function. If the function is not <code class="docutils literal notranslate"><span class="pre">==</span></code> or <code class="docutils literal notranslate"><span class="pre">/=</span></code>, all sides must be real numbers.</p></li>
+</ul>
+<p>`` Non-Dice: None-dice will simply be compared to the right operand, as per the above rules. <code class="docutils literal notranslate"><span class="pre">==</span></code> and <code class="docutils literal notranslate"><span class="pre">/=</span></code> can take any literal, while the other functions can only take real numbers.</p>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Y</span></code>: The number to test against.</p>
+<blockquote>
+<div><ul>
+<li><p>Valid Types:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Dice: If a die is the right operand, it will be evaluated, and its result passed as the function’s right argument.</p></li>
+<li><p>Non-Dice: None-dice will be used to judge the results of the die passed as the left operand, or simply compared to the left operand, as per the above rules. <code class="docutils literal notranslate"><span class="pre">==</span></code> and <code class="docutils literal notranslate"><span class="pre">/=</span></code> can take any literal, while the other functions can only take real numbers.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+<section id="logical-functions">
+<span id="id3"></span><h1>Logical Functions<a class="headerlink" href="#logical-functions" title="Permalink to this headline">¶</a></h1>
+<p>The following commands are all logical operators, acting on their operands based on their Truthy-ness.</p>
+<section id="forced-boolean-bool">
+<span id="bool"></span><h2>Forced Boolean ( <code class="docutils literal notranslate"><span class="pre">bool</span></code>)<a class="headerlink" href="#forced-boolean-bool" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">bool</span></code> function transforms its argument to its logical equivalent: Truthy values will be converted to <code class="docutils literal notranslate"><span class="pre">True</span></code>, and Falsey values will be converted to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">bool</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Operator Type: Functional</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code>: The value to transform to a boolean.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>All types can be passed to <code class="docutils literal notranslate"><span class="pre">bool</span></code>. Dice will be evaluated prior to the operator being called.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="logical-negation-not">
+<span id="not"></span><h2>Logical Negation ( <code class="docutils literal notranslate"><span class="pre">~</span></code>, <code class="docutils literal notranslate"><span class="pre">not</span></code>)<a class="headerlink" href="#logical-negation-not" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">~</span></code> and <code class="docutils literal notranslate"><span class="pre">not</span></code> functions transform their arguments to their logical opposites: Truthy values will be converted to <code class="docutils literal notranslate"><span class="pre">False</span></code>, and Falsey values will be converted to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">~</span><span class="n">X</span>
+</pre></div>
+</div>
+<p>OR</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ow">not</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Operator Type: Prefix 6 ( <code class="docutils literal notranslate"><span class="pre">~</span></code>) or Functional ( <code class="docutils literal notranslate"><span class="pre">not</span></code>)</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code>: The value to logically negate.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>All types can be passed to <code class="docutils literal notranslate"><span class="pre">~</span></code> and <code class="docutils literal notranslate"><span class="pre">not</span></code>. Dice will be evaluated prior to the operator being called.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="logical-conjunction">
+<span id="and"></span><h2>Logical Conjunction ( <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code>)<a class="headerlink" href="#logical-conjunction" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code> function takes the logical conjunction of its arguments. In other words, if its operands are both Truthy, it returns <code class="docutils literal notranslate"><span class="pre">True</span></code>; otherwise, it returns <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="o">&amp;&amp;</span><span class="n">Y</span>
+</pre></div>
+</div>
+<p>Operator Type: Infix 3</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">Y</span></code>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>All types can be passed to <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code>. Dice will be evaluated prior to the operator being called.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="logical-disjunction-or">
+<span id="or"></span><h2>Logical Disjunction ( <code class="docutils literal notranslate"><span class="pre">||</span></code>, <code class="docutils literal notranslate"><span class="pre">or</span></code>)<a class="headerlink" href="#logical-disjunction-or" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">||</span></code> function takes the logical disjunction of its arguments. In other words, if both of its operands are Falsey, it returns <code class="docutils literal notranslate"><span class="pre">False</span></code>; otherwise, it returns <code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="o">||</span><span class="n">Y</span>
+</pre></div>
+</div>
+<p>Operator Type: Infix 2</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">Y</span></code>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>All types can be passed to <code class="docutils literal notranslate"><span class="pre">||</span></code>. Dice will be evaluated prior to the operator being called.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="if-function-if">
+<span id="if"></span><h2>If Function ( <code class="docutils literal notranslate"><span class="pre">if</span></code>)<a class="headerlink" href="#if-function-if" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">if</span></code> function is the primary use for booleans. It takes three arguments: A boolean (or argument to be interpreted as a boolean), followed by two statements. If the first argument is Truthy, <code class="docutils literal notranslate"><span class="pre">if</span></code> returns the second argument; otherwise, it returns the third argument.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Operator Type: Functional</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>All types can be passed to <code class="docutils literal notranslate"><span class="pre">X</span></code>, to be read as Truthy or Falsey. Dice will be evaluated prior to the operator being called.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Y</span></code> and <code class="docutils literal notranslate"><span class="pre">Z</span></code>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>All types can be passed to <code class="docutils literal notranslate"><span class="pre">Y</span></code> and <code class="docutils literal notranslate"><span class="pre">Z</span></code>. They will not be simplified until <code class="docutils literal notranslate"><span class="pre">X</span></code> is resolved.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+<section id="numeric-functions">
+<span id="id4"></span><h1>Numeric Functions<a class="headerlink" href="#numeric-functions" title="Permalink to this headline">¶</a></h1>
+<p>The following commands all perform standard operations on numeric values.</p>
+<section id="exponentiation">
+<span id="id5"></span><h2>Exponentiation ( <code class="docutils literal notranslate"><span class="pre">^</span></code>)<a class="headerlink" href="#exponentiation" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">^</span></code> function performs exponentiation, as follows:</p>
+<ul class="simple">
+<li><p>If both arguments are numbers, the left will be raised to the power of the right. If the left is a float, or the right a non-integer, floating point arithmetic will be used; otherwise, values will be exactly calculated.</p></li>
+<li><p>If the left argument is a number, and the right a numeric vector, the result will be a numeric vector, containing the results of raising the left argument to each element of the right accordingly.</p></li>
+<li><p>If the left argument is a numeric vector, and the right a number, the result will be a numeric vector, containing the results of raising each element of the left argument to the power of the right.</p></li>
+<li><p>If both arguments are numeric vectors of the same length, corresponding elements will be exponentiated.</p></li>
+</ul>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="o">^</span><span class="n">Y</span>
+</pre></div>
+</div>
+<p>Operator Type: Infix 4</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">Y</span></code>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Numbers</p></li>
+<li><p>Numeric Vectors: If both arguments are vectors, they must be of the same length.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="multiplication">
+<span id="id6"></span><h2>Multiplication ( <code class="docutils literal notranslate"><span class="pre">*</span></code>)<a class="headerlink" href="#multiplication" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">*</span></code> function performs multiplication, as follows:</p>
+<ul class="simple">
+<li><p>If both arguments are numbers, they will be multiplied. If either is a float, floating point arithmetic will be used; otherwise, values will be exactly calculated.</p></li>
+<li><p>If one argument is a number and the other is a numeric vector, each element in the vector will be multiplied by the single element.</p></li>
+<li><p>If both arguments are numeric vectors of the same length, corresponding elements will be multiplied.</p></li>
+</ul>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="o">*</span><span class="n">Y</span>
+</pre></div>
+</div>
+<p>Operator Type: Infix 3</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">Y</span></code>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Numbers</p></li>
+<li><p>Numeric Vectors: If both arguments are vectors, they must be of the same length.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="divison">
+<span id="division"></span><h2>Divison ( <code class="docutils literal notranslate"><span class="pre">/</span></code>)<a class="headerlink" href="#divison" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">/</span></code> function performs divison on numbers.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="o">/</span><span class="n">Y</span>
+</pre></div>
+</div>
+<p>Operator Type: Infix 3</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">Y</span></code>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Numbers: <code class="docutils literal notranslate"><span class="pre">Y</span></code> must be non-zero.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="modulus">
+<span id="id7"></span><h2>Modulus ( <code class="docutils literal notranslate"><span class="pre">%</span></code>)<a class="headerlink" href="#modulus" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">%</span></code> function returns the remainder of its left argument when divided by its right argument.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="o">%</span><span class="n">Y</span>
+</pre></div>
+</div>
+<p>Operator Type: Infix 3</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">Y</span></code>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Integers: <code class="docutils literal notranslate"><span class="pre">Y</span></code> must be non-zero.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="addition">
+<span id="id8"></span><h2>Addition ( <code class="docutils literal notranslate"><span class="pre">+</span></code>)<a class="headerlink" href="#addition" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">+</span></code> function performs addition. It can add pairs of numbers or pairs of vectors; vectors will be added componentwse.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="o">+</span><span class="n">Y</span>
+</pre></div>
+</div>
+<p>Operator Type: Infix 2</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">Y</span></code>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Both can be numbers</p></li>
+<li><p>Both can be numeric vectors</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="subtraction">
+<span id="id9"></span><h2>Subtraction ( <code class="docutils literal notranslate"><span class="pre">-</span></code>)<a class="headerlink" href="#subtraction" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">-</span></code> function performs subtraction and negation:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>It can subtract pairs of numbers or pairs of vectors; vectors will be subtract componentwse.</p></li>
+<li><p>If there’s nothing to be subtracted from, <code class="docutils literal notranslate"><span class="pre">-</span></code> will negate its number or vector operand.</p></li>
+</ul>
+</div></blockquote>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="o">-</span><span class="n">Y</span>
+</pre></div>
+</div>
+<p>OR</p>
+<dl class="simple">
+<dt>::</dt><dd><p>-X</p>
+</dd>
+</dl>
+<p>Operator Type: Infix 2 or Prefix 6</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code> and (Possibly) <code class="docutils literal notranslate"><span class="pre">Y</span></code>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Both can be numbers</p></li>
+<li><p>Both can be numeric vectors</p></li>
+<li><p>Numbers</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="ceiling-ceil">
+<span id="ceiling"></span><h2>Ceiling ( <code class="docutils literal notranslate"><span class="pre">ceil</span></code>)<a class="headerlink" href="#ceiling-ceil" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">ceil</span></code> function gets the ceiling of a real number. The ceiling of a real number is the smallest integer greater than or equal to said real number; in other words, <code class="docutils literal notranslate"><span class="pre">ceil</span></code> rounds a number up.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ceil</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Operator Type: Functional</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Real Numbers</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="floor-floor">
+<span id="floor"></span><h2>Floor ( <code class="docutils literal notranslate"><span class="pre">floor</span></code>)<a class="headerlink" href="#floor-floor" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">floor</span></code> function gets the floor of a real number. The floor of a real number is the largest integer less than or equal to said real number; in other words, <code class="docutils literal notranslate"><span class="pre">floor</span></code> rounds a number down.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">floor</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Operator Type: Functional</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Real Numbers</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="round-round">
+<span id="round"></span><h2>Round ( <code class="docutils literal notranslate"><span class="pre">round</span></code>)<a class="headerlink" href="#round-round" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">round</span></code> function rounds a real number in the traditional way; if a number’s fractional part is less than <code class="docutils literal notranslate"><span class="pre">0.5</span></code>, round down; otherwise, round up.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">round</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Operator Type: Functional</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Real Numbers</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="maximum-max">
+<span id="max"></span><h2>Maximum ( <code class="docutils literal notranslate"><span class="pre">max</span></code>)<a class="headerlink" href="#maximum-max" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">max</span></code> function takes an indefinite number of real numbers, and returns the largest one.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">max</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="o">...</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Operator Type: Functional</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, …, <code class="docutils literal notranslate"><span class="pre">Z</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Real Numbers</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="minimum-min">
+<span id="min"></span><h2>Minimum ( <code class="docutils literal notranslate"><span class="pre">min</span></code>)<a class="headerlink" href="#minimum-min" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">min</span></code> function takes an indefinite number of real numbers, and returns the smallest one.</p>
+<p>Syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">min</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="o">...</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Operator Type: Functional</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, …, <code class="docutils literal notranslate"><span class="pre">Z</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Real Numbers</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">rpdiscordts</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Command Pages</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Dice Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resolution.html">Resolution</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#format">Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dice-functions">Dice Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#logical-functions">Logical Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#numeric-functions">Numeric Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="characters.html">Using Characters in Dice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../privacy.html">Privacy</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Dice Reference</a><ul>
+      <li>Previous: <a href="resolution.html" title="previous chapter">Resolution</a></li>
+      <li>Next: <a href="characters.html" title="next chapter">Using Characters in Dice</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;1980, Corin (CWStra).
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/dice_reference/functions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Concepts &#8212; rpdiscordts  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Resolution" href="resolution.html" />
+    <link rel="prev" title="Dice Reference" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="concepts">
+<span id="dice-concepts"></span><h1>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h1>
+<section id="truthy-and-falsey-values">
+<h2>Truthy and Falsey Values<a class="headerlink" href="#truthy-and-falsey-values" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>Bool</cite> function, along with certain other boolean-based functions, will coerce values to <cite>True</cite> or <cite>False</cite>:</p>
+<ul class="simple">
+<li><p><cite>0</cite> and the empty vector <cite>()</cite> will be converted to <cite>False</cite>; these, along with <cite>False</cite> itself, are called “Falsey” values.</p></li>
+<li><p>Unrolled dice pools will be evaluated prior to coercion.</p></li>
+<li><p>All other values will be converted to <cite>True</cite>, and are thus called “Truthy”.</p></li>
+</ul>
+</section>
+<section id="exploding-dice">
+<h2>Exploding Dice<a class="headerlink" href="#exploding-dice" title="Permalink to this headline">¶</a></h2>
+<p>Dice pools can <em>explode</em> on certain values.</p>
+<p>If a dice pool <em>explodes</em> on a value <code class="docutils literal notranslate"><span class="pre">N</span></code>, for each die whose result is <code class="docutils literal notranslate"><span class="pre">N</span></code>, one rolls an additional die, which could, in turn explode, and so on.</p>
+<p>For example, say we roll <code class="docutils literal notranslate"><span class="pre">10d6!</span></code>, a pool of ten six-sided dice that explode on a result of 6, and get:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span>
+</pre></div>
+</div>
+<p>We rolled three sixes in this pool. Since these dice explode on the six, we roll an additional <code class="docutils literal notranslate"><span class="pre">3d6!</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>We managed another six, so we get to roll another <code class="docutils literal notranslate"><span class="pre">1d6!</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">5</span>
+</pre></div>
+</div>
+<p>No more sixes there, so we’re done rolling; now we add up the results and get our end total:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mi">5</span><span class="o">+</span><span class="mi">4</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="mi">4</span><span class="o">+</span><span class="mi">6</span><span class="o">+</span><span class="mi">2</span><span class="o">+</span><span class="mi">4</span><span class="o">+</span><span class="mi">3</span><span class="o">+</span><span class="mi">6</span><span class="o">+</span><span class="mi">6</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="mi">6</span><span class="o">+</span><span class="mi">2</span><span class="o">+</span><span class="mi">5</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="o">-&gt;</span> <span class="mi">59</span>
+</pre></div>
+</div>
+</section>
+<section id="dropped-dice">
+<h2>Dropped Dice<a class="headerlink" href="#dropped-dice" title="Permalink to this headline">¶</a></h2>
+<p>When rerolling with the <cite>r</cite> family of functions, or using keep or drop functions, rather than omitting the dropped dice, the parser will instead display them within forward slashes. For example, with an input of <cite>2d6kh1</cite> (which means “roll 2d6, keep the highest 1”), a result might look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="o">//</span><span class="mi">3</span><span class="o">//</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span>
+<span class="o">-&gt;</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>Since we were keeping only the highest result, the parser dropped the first <cite>3</cite> it rolled, displaying it as <cite>//3//</cite>.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">rpdiscordts</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Command Pages</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Dice Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resolution.html">Resolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#format">Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dice-functions">Dice Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#logical-functions">Logical Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#numeric-functions">Numeric Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="characters.html">Using Characters in Dice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../privacy.html">Privacy</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Dice Reference</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Dice Reference</a></li>
+      <li>Next: <a href="resolution.html" title="next chapter">Resolution</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;1980, Corin (CWStra).
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/dice_reference/concepts.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
