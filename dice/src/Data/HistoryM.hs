@@ -9,7 +9,6 @@ module Data.HistoryM
     Data.HistoryM.mapMaybe,
     --fork,
     --dualFork,
-    traceHistory,
     withMap,
     withMapReplace,
     withZip,
@@ -137,12 +136,6 @@ withZipReplace display fn ha = do
   res <- withZip fn ha
   modifyLatestTimeline $ TL.replaceLast $ display res
   return res
-
-traceHistory :: String -> HistoryM g a -> HistoryM g a
-traceHistory mark fa = do
-  res <- fa
-  h <- gets fst
-  return $ trace ("\n" <> mark <> " start\n" <> show h <> "\n" <> mark <> " end\n") res
 
 simpleRoll :: RandomGen g => Simplified.Dice -> HistoryM g (Text, GeneralNumber)
 simpleRoll d = do

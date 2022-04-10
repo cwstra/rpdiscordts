@@ -490,7 +490,7 @@ simplifyIfNode :: RandomGen g => ASTNode -> ASTNode -> ASTNode -> HistoryM g Sim
 simplifyIfNode condNode thenNode elseNode = HM.withJoin $ do
   let (thenDis, elseDis) = (printStage thenNode, printStage elseNode)
   cond <- HM.withMap (\s -> "if(" <> s <> ", " <> thenDis <> ", " <> elseDis <> ")") $ toBool <$> resolve condNode
-  HM.traceHistory "If " $ simplify $ if cond then thenNode else elseNode
+  simplify $ if cond then thenNode else elseNode
 
 simplifyExponentNode :: RandomGen g => Precedence -> ASTNode -> ASTNode -> HistoryM g Simplified
 simplifyExponentNode expPrec node1 node2 = HM.withZipReplace Simplified.display (infixText "^") $ do
