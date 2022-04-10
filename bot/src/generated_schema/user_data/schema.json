@@ -1,0 +1,264 @@
+[
+  {
+    "name": "channels",
+    "columns": [
+      {
+        "name": "channel_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "charseps",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      },
+      {
+        "name": "charsigns",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      },
+      {
+        "name": "codex",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "ephemeral",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 16,
+        "typeName": "BOOL"
+      },
+      {
+        "name": "freeze_on_timeout",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 16,
+        "typeName": "BOOL"
+      },
+      {
+        "name": "inline",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 16,
+        "typeName": "BOOL"
+      },
+      {
+        "name": "server_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "character_attributes",
+    "columns": [
+      {
+        "name": "character_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "value",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "characters",
+    "columns": [
+      {
+        "name": "character_id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "character_name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "member_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "server_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "codex_list",
+    "columns": [
+      {
+        "name": "display_name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "prefix",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "command_usage",
+    "columns": [
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "uses",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 20,
+        "typeName": "BIGINT"
+      }
+    ]
+  },
+  {
+    "name": "server_mod_roles",
+    "columns": [
+      {
+        "name": "role_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "server_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "servers",
+    "columns": [
+      {
+        "name": "charseps",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      },
+      {
+        "name": "charsigns",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 1009,
+        "typeName": "TEXT[]"
+      },
+      {
+        "name": "codex",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "ephemeral",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 16,
+        "typeName": "BOOL"
+      },
+      {
+        "name": "freeze_on_timeout",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 16,
+        "typeName": "BOOL"
+      },
+      {
+        "name": "inline",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 16,
+        "typeName": "BOOL"
+      },
+      {
+        "name": "server_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "unique_servers",
+    "columns": [
+      {
+        "name": "server_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  },
+  {
+    "name": "unique_users",
+    "columns": [
+      {
+        "name": "user_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      }
+    ]
+  }
+]

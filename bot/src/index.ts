@@ -2,6 +2,8 @@ import { Client, Collection, CommandInteraction, Intents } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { DISCORD_TOKEN } from "./env-vars";
 import { commandList } from "./command-info";
+import { User } from "./sql-connections";
+import { sql } from "@databases/pg";
 
 export class ExtendedClient extends Client {
   constructor(options: ConstructorParameters<typeof Client>[0]) {
@@ -44,6 +46,24 @@ client.on("interactionCreate", async (interaction) => {
       content: "There was an error while executing this command!",
       ephemeral: true,
     });
+  }
+
+  try {
+    await User.db.query(sql`
+      insert into command_usage(name, uses)
+      values (${interaction.commandName}, 1)
+      on conflict (name)
+      do update set uses = uses + 1
+    `);
+    await User.tables
+      .unique_users(User.db)
+      .insertOrIgnore({ user_id: interaction.user.id });
+    if (interaction.guildId)
+      await User.tables
+        .unique_servers(User.db)
+        .insertOrIgnore({ server_id: interaction.guildId });
+  } catch (error) {
+    console.error(error);
   }
 });
 
