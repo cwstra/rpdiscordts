@@ -190,5 +190,5 @@ Error Message:\`${jsonResult.errorMessage}\``;
   ).join("\n");
   return `${inputStr}
 ${block(historyDisplay)}
-Result: ${jsonResult.result}`;
+Result: \`${jsonResult.result}\``;
 }
