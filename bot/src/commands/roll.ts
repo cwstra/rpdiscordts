@@ -172,11 +172,11 @@ const block = (s: string) => "```\n" + s + "```";
 function formatResult(expression: string, jsonResult: JSONResult): string {
   const inputStr = `${
     expression === jsonResult.input ? "" : `Expression: ${expression}\n`
-  }Input: ${jsonResult.input}`;
+  }Input: \`${jsonResult.input}\``;
   if (jsonResult.status === "Failure")
     return `Roll Failure:
 ${inputStr}
-Error Message:${jsonResult.errorMessage}`;
+Error Message:\`${jsonResult.errorMessage}\``;
   const recombinedHistory =
     jsonResult.history[0][0] === jsonResult.history[0][1]
       ? rest(jsonResult.history)

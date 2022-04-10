@@ -13,7 +13,8 @@ module Data.HistoryM
     withMapReplace,
     withZip,
     withZipReplace,
-    roll,
+    simpleRoll,
+    injectRollResult,
   )
 where
 
@@ -112,11 +113,20 @@ withZipReplace display fn ha = do
   modifyLatestTimeline $ TL.replaceLast $ display res
   return res
 
-roll :: RandomGen g => Simplified.Dice -> HistoryM g GeneralNumber
-roll d = do
+simpleRoll :: RandomGen g => Simplified.Dice -> HistoryM g (Text, GeneralNumber)
+simpleRoll d = do
   g <- gets snd
   let (terms, res, g') = Simplified.rollWrappedDice d g
   let termText = T.concat ["(", T.intercalate " + " $ map (showKeptOrDropped show) terms, ")"]
-  modifyLatestTimeline $ flip TL.add (termText, numShow res)
   modify $ second $ const g'
+  return (termText, res)
+
+injectRollResult :: (Show a, RandomGen g) => (a -> Text) -> (Text, a) -> HistoryM g a
+injectRollResult resShow (termText, res) = do
+  modifyLatestTimeline $
+    flip
+      TL.add
+      ( termText,
+        resShow res
+      )
   return res

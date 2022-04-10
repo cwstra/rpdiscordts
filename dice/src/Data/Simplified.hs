@@ -26,9 +26,14 @@ import Data.NumTest
 import qualified Data.Text as T
 import Data.UserNumber
 import System.Random
+import qualified Text.Show
 
 data Dice = Ordered (DicePool GeneralRealNumber) | General (DicePool GeneralNumber)
-  deriving (Eq, Show)
+  deriving (Eq)
+
+instance Show Dice where
+  show (Ordered d) = show d
+  show (General d) = show d
 
 rollWrappedDice :: RandomGen g => Dice -> g -> ([KeptOrDropped GeneralNumber], GeneralNumber, g)
 rollWrappedDice (Ordered p) = D.rollDicePool p

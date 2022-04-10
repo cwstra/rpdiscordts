@@ -30,7 +30,7 @@ import qualified Data.Simplified as Simplified
 import qualified Data.Text as T
 import Data.UserNumber
 import System.Random
-import qualified Text.Show as S
+import qualified Text.Show
 
 liftMaybe :: Text -> Maybe a -> HistoryM g a
 liftMaybe _ (Just a) = return a
@@ -593,10 +593,9 @@ simplifyMaxNode nodes = HM.withMap (enclose "max(" ")") $
     return $ Simplified.Number $ toGeneralNumber $ foldl' max n ns
 
 simplifyVectorNode :: RandomGen g => ASTNode -> NonEmpty ASTNode -> HistoryM g Simplified
-simplifyVectorNode node nodes = HM.withMap (enclose "(" ")") $
-  HM.withZipReplace Simplified.display (infixText ", ") $ do
-    (s :| ss) <- mapM simplify $ [node] <> nodes
-    return $ Simplified.Vector $ s : ss
+simplifyVectorNode node nodes = HM.withMap (enclose "(" ")") $ do
+  (s :| ss) <- HM.withZip (infixText ", ") $ mapM simplify $ [node] <> nodes
+  return $ Simplified.Vector $ s : ss
 
 simplifyResolveNode :: RandomGen g => ASTNode -> HistoryM g Simplified
 simplifyResolveNode node = HM.withMap (enclose "[" "]") $ simplifiedToResolved <$> resolve node
@@ -607,14 +606,17 @@ simplifiedToResolved (Resolved.Boolean b) = Simplified.Boolean b
 simplifiedToResolved (Resolved.Vector rs) = Simplified.Vector $ map simplifiedToResolved rs
 
 resolveSimplified :: RandomGen g => Simplified -> HistoryM g Resolved
-resolveSimplified s
-  | Simplified.Number n <- s = return $ Resolved.Number n
-  | Simplified.Boolean b <- s = return $ Resolved.Boolean b
-  | Simplified.Dice d <- s = Resolved.Number <$> HM.roll d
-  | Simplified.Vector vs <- s = HM.withMap (enclose "(" ")") $
-    HM.withZipReplace Resolved.display (infixText ", ") $ do
-      res <- mapM resolveSimplified vs
-      return $ Resolved.Vector res
+resolveSimplified (Simplified.Number n) = return $ Resolved.Number n
+resolveSimplified (Simplified.Boolean b) = return $ Resolved.Boolean b
+resolveSimplified s = step s >>= HM.injectRollResult Resolved.display
+  where
+    step :: RandomGen g => Simplified -> HistoryM g (Text, Resolved)
+    step (Simplified.Number n) = return (numShow n, Resolved.Number n)
+    step (Simplified.Boolean b) = return (show b, Resolved.Boolean b)
+    step (Simplified.Dice d) = second Resolved.Number <$> HM.simpleRoll d
+    step (Simplified.Vector vs) = do
+      reses <- mapM step vs
+      return ("(" <> T.intercalate ", " (fmap fst reses) <> ")", Resolved.Vector $ fmap snd reses)
 
 resolve :: RandomGen g => ASTNode -> HistoryM g Resolved
 resolve = simplify >=> resolveSimplified
