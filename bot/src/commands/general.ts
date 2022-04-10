@@ -33,7 +33,7 @@ module.exports = {
       }),
     BOT_GIT_URL &&
       makeCommand({
-        name: "docs",
+        name: "github",
         description: "Sends the link to the bot's github repository",
         execute: wrappedExecute(async ({ wrapped }) => {
           await wrapped.reply(BOT_GIT_URL!);
@@ -41,7 +41,7 @@ module.exports = {
       }),
     DONATION_TEXT &&
       makeCommand({
-        name: "docs",
+        name: "donation",
         description: "Sends links to donate to the bot's upkeep",
         execute: wrappedExecute(async ({ wrapped }) => {
           await wrapped.reply(DONATION_TEXT!);
