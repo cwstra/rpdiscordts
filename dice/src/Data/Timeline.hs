@@ -16,6 +16,7 @@ module Data.Timeline
     Data.Timeline.zip,
     concatWith,
     getForwardHistory,
+    resolveJoin,
   )
 where
 
@@ -66,6 +67,18 @@ join
   Timeline {history = aHist, historyLength = aLen}
   Timeline {history = bHist, historyLength = bLen} =
     Timeline {history = bHist <> aHist, historyLength = bLen + aLen}
+
+resolveJoin :: NonEmpty Timeline -> Timeline
+resolveJoin = foldr1 step
+  where
+    step :: Timeline -> Timeline -> Timeline
+    step
+      Timeline {history = bHist, historyLength = bLen}
+      Timeline {history = Instant {unresolved = unA} :| aHist, historyLength = aLen} =
+        Timeline {history = lastB :| initB ++ aHist, historyLength = bLen + aLen}
+        where
+          inst :| restB = NE.reverse bHist
+          lastB :| initB = NE.reverse $ inst {unresolved = unA} :| restB
 
 replaceThenJoin :: Timeline -> Text -> Timeline -> Timeline
 replaceThenJoin tl1 t = Data.Timeline.join (replaceLast t tl1)

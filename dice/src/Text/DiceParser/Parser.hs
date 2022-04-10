@@ -42,7 +42,12 @@ function = singleFn <|> ifParser <|> manyFn
       choice $
         map
           singleParser
-          [(BoolNode, "bool"), (CeilingNode, "ceil"), (FloorNode, "floor"), (RoundNode, "round")]
+          [ (BoolNode, "bool"),
+            (NotNode, "not"),
+            (CeilingNode, "ceil"),
+            (FloorNode, "floor"),
+            (RoundNode, "round")
+          ]
     ifParser =
       (IfNode <$ "if(")
         <*> (expr <* skipSpace <* "," <* skipSpace)

@@ -9,10 +9,12 @@ module Data.HistoryM
     Data.HistoryM.mapMaybe,
     --fork,
     --dualFork,
+    traceHistory,
     withMap,
     withMapReplace,
     withZip,
     withZipReplace,
+    withJoin,
     simpleRoll,
     injectRollResult,
   )
@@ -27,13 +29,15 @@ import Data.UserNumber
 import System.Random
 import qualified Text.Show
 
-data HistoryZip = Zip (Text -> Text -> Text) [Timeline]
+data HistoryZip = Zip (Text -> Text -> Text) [Timeline] | Join [Timeline]
 
 instance Show HistoryZip where
   show (Zip _ tl) = "Zip fn " <> show tl
+  show (Join tl) = "Join " <> show tl
 
 mapToEntries :: ([Timeline] -> [Timeline]) -> HistoryZip -> HistoryZip
 mapToEntries fn (Zip zFn tls) = Zip zFn $ fn tls
+mapToEntries fn (Join tls) = Join $ fn tls
 
 type HistoryM g = ExceptT Text (State ([HistoryZip], g))
 
@@ -44,8 +48,13 @@ runHistory g m = (res, (collapse zips, g'))
     (res, (zips, g')) = runState (runExceptT m) ([], g)
     collapse [] = []
     collapse (Zip _ [] : zs) = collapse zs
+    collapse (Join [] : zs) = collapse zs
     collapse [Zip tfn (tl : tls)] = TL.getForwardHistory $ TL.concatWith tfn $ tl :| tls
+    collapse [Join (tl : tls)] = TL.getForwardHistory $ TL.resolveJoin $ tl :| tls
     collapse (Zip t1fn (tl1 : tl1s) : Zip t2fn tl2s : zs) = collapse $ Zip t2fn (TL.concatWith t1fn (tl1 :| tl1s) : tl2s) : zs
+    collapse (Zip t1fn (tl1 : tl1s) : Join tl2s : zs) = collapse $ Join (TL.concatWith t1fn (tl1 :| tl1s) : tl2s) : zs
+    collapse (Join (tl1 : tl1s) : Zip t2fn tl2s : zs) = collapse $ Zip t2fn (TL.resolveJoin (tl1 :| tl1s) : tl2s) : zs
+    collapse (Join (tl1 : tl1s) : Join tl2s : zs) = collapse $ Join (TL.resolveJoin (tl1 :| tl1s) : tl2s) : zs
 
 modifyHistory :: ([HistoryZip] -> [HistoryZip]) -> HistoryM g ()
 modifyHistory = modify . first
@@ -65,7 +74,9 @@ showReturn a = do
   where
     dis = show a
     go [] = [Zip (<>) [TL.new (dis, dis)]]
-    go ls = mapHead (\(Zip fn es) -> Zip fn $ TL.new (dis, dis) : es) ls
+    go ls = mapHead mapper ls
+    mapper (Zip fn es) = Zip fn $ TL.new (dis, dis) : es
+    mapper (Join es) = Join $ TL.new (dis, dis) : es
 
 {-
 showReturn :: Show a => a -> HistoryM g a
@@ -104,7 +115,21 @@ withZip fn ha = do
   where
     --wrap ((Zip fn1 (tl : tls)) : (Zip fn2 tl2) : zs) = Zip fn2 (TL.concatWith fn1 (tl :| tls) : tl2) : zs
     wrap ((Zip fn1 (tl : tls)) : (Zip fn2 tl2) : zs) = Zip fn2 (TL.concatWith fn1 (tl :| tls) : tl2) : zs
-    wrap [Zip fn1 (tl : tls)] = [Zip (\a b -> a <> "" <> b) [TL.concatWith fn1 (tl :| tls)]]
+    wrap ((Zip fn1 (tl : tls)) : (Join tl2) : zs) = Join (TL.concatWith fn1 (tl :| tls) : tl2) : zs
+    wrap [Zip fn1 (tl : tls)] = [Zip (<>) [TL.concatWith fn1 (tl :| tls)]]
+    wrap _ = []
+
+withJoin :: HistoryM g a -> HistoryM g a
+withJoin ha = do
+  modifyHistory (Join [] :)
+  a <- ha
+  modifyHistory wrap
+  return a
+  where
+    --wrap ((Zip fn1 (tl : tls)) : (Zip fn2 tl2) : zs) = Zip fn2 (TL.concatWith fn1 (tl :| tls) : tl2) : zs
+    wrap ((Join (tl : tls)) : (Zip fn2 tl2) : zs) = Zip fn2 (TL.resolveJoin (tl :| tls) : tl2) : zs
+    wrap ((Join (tl : tls)) : (Join tl2) : zs) = Join (TL.resolveJoin (tl :| tls) : tl2) : zs
+    wrap [Join (tl : tls)] = [Zip (<>) [TL.resolveJoin $ tl :| tls]]
     wrap _ = []
 
 withZipReplace :: (a -> Text) -> (Text -> Text -> Text) -> HistoryM g a -> HistoryM g a
@@ -112,6 +137,12 @@ withZipReplace display fn ha = do
   res <- withZip fn ha
   modifyLatestTimeline $ TL.replaceLast $ display res
   return res
+
+traceHistory :: String -> HistoryM g a -> HistoryM g a
+traceHistory mark fa = do
+  res <- fa
+  h <- gets fst
+  return $ trace ("\n" <> mark <> " start\n" <> show h <> "\n" <> mark <> " end\n") res
 
 simpleRoll :: RandomGen g => Simplified.Dice -> HistoryM g (Text, GeneralNumber)
 simpleRoll d = do
