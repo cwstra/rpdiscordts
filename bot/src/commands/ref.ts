@@ -6,7 +6,7 @@ import * as E from "fp-ts/Either";
 import * as T from "fp-ts/Task";
 import * as TE from "fp-ts/TaskEither";
 import * as TO from "fp-ts/TaskOption";
-import { splitEvery, splitWhen } from "rambda";
+import { init, last, splitEvery, splitWhen, sum } from "rambda";
 import { checkForGuildAndMember } from "../helpers/commands";
 import { isKeyOf } from "../helpers/general";
 import { sendPaginatedEmbeds } from "../helpers/paginator";
@@ -144,22 +144,39 @@ module.exports = {
                   TE.fromTask(async () => {
                     const sanitizedFields = embed.fields
                       ? (
-                          embed.fields as { name: string; value: string }[]
+                          embed.fields as {
+                            name: string;
+                            value: string;
+                            inline?: boolean;
+                          }[]
                         ).flatMap((field) =>
                           field.value.length > 1024
                             ? splitString(field.value, 1024).map(
                                 (value, i) => ({
                                   name: `${field.name} p.${i + 1}`,
                                   value,
+                                  inline: false,
                                 })
                               )
                             : [field]
                         )
                       : undefined;
+                    const splits =
+                      sanitizedFields?.reduce(
+                        (
+                          acc,
+                          f
+                        ): Exclude<typeof sanitizedFields, undefined>[] =>
+                          sum(last(acc).map(({ inline }) => (inline ? 1 : 3))) >
+                          9
+                            ? [...acc, [f]]
+                            : [...init(acc), [...last(acc), f]],
+                        [[]] as Exclude<typeof sanitizedFields, undefined>[]
+                      ) ?? [];
                     const embeds =
-                      !sanitizedFields || sanitizedFields.length < 4
+                      splits.length < 4
                         ? [embed]
-                        : splitEvery(3, sanitizedFields).map((fields) => ({
+                        : splits.map((fields) => ({
                             ...embed,
                             fields,
                           }));
