@@ -1,3 +1,4 @@
+import { CommandInteraction } from "discord.js";
 import { FlattenedArrayUnion, FlattenedObjectUnion } from "./types";
 
 export function assert(condition: any, msg?: string): asserts condition {
@@ -33,4 +34,27 @@ export function trace<T>(t: T): T {
 
 export function isKeyOf<T>(t: T) {
   return (s: PropertyKey): s is keyof T => s in t;
+}
+
+export function checkChannelSendPerms(interaction: CommandInteraction) {
+  switch (interaction.channel?.type) {
+    case "DM":
+      return true;
+    case "GUILD_TEXT":
+    case "GUILD_NEWS": {
+      if (!interaction.guild?.me) return false;
+      const perms = interaction.channel.permissionsFor(interaction.guild.me);
+      return perms.has("SEND_MESSAGES");
+    }
+    case "GUILD_PUBLIC_THREAD":
+    case "GUILD_NEWS_THREAD":
+    case "GUILD_PRIVATE_THREAD": {
+      if (!interaction.guild?.me) return false;
+      const perms = interaction.channel.permissionsFor(interaction.guild.me);
+      return perms.has("SEND_MESSAGES_IN_THREADS");
+    }
+    case null:
+    case undefined:
+      return false;
+  }
 }

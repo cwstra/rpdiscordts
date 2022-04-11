@@ -10,7 +10,7 @@ import {
   checkForGuildAndMember,
   CommandInteractionFromGuild,
 } from "../helpers/commands";
-import { assert, trace } from "../helpers/general";
+import { assert, checkChannelSendPerms, trace } from "../helpers/general";
 import { compact, findApply } from "../helpers/array";
 import { WrappedReplies, wrappedTask } from "../interaction-wrapper";
 import { equals, sortBy } from "rambda";
@@ -460,32 +460,38 @@ module.exports = makeCommand({
                     channel_id: channel?.id,
                     item: "ephemeral",
                   }),
-                T.chain(([source, currentEntry, ephemeral = true]) => {
-                  return doBaseYesNoDialog(interaction, wrapped, {
-                    query: ephemeral
-                      ? [
-                          `The bot's replies to commands in this ${target} will currently be ephemeral (only visible to the user of the command).`,
-                          `Would you like to make them visible to everyone?`,
-                        ].join("\n")
-                      : [
-                          `The bot's replies to commands in this ${target} will currently be visible to everyone.`,
-                          `Would you like to make them ephemerial (only visible to the user of the command)?`,
-                        ].join("\n"),
-                    success: `Commands will now be ${
-                      ephemeral ? "visible to everyone" : "ephemeral"
-                    }!`,
-                    cancel: `Command visibility change cancelled!`,
-                    error: `Hm. Something went wrong while changing command visibility. Maybe try again?`,
-                    action: sharedEntryUpdate({
-                      server_id: interaction.guild!.id,
-                      channel_id: interaction.channel!.id,
-                      currentEntry,
-                      source,
-                      target,
-                      updateObject: () => ({ ephemeral: !ephemeral }),
-                    }),
-                  });
-                }),
+                T.chain(
+                  ([
+                    source,
+                    currentEntry,
+                    ephemeral = checkChannelSendPerms(interaction),
+                  ]) => {
+                    return doBaseYesNoDialog(interaction, wrapped, {
+                      query: ephemeral
+                        ? [
+                            `The bot's replies to commands in this ${target} will currently be ephemeral (only visible to the user of the command).`,
+                            `Would you like to make them visible to everyone?`,
+                          ].join("\n")
+                        : [
+                            `The bot's replies to commands in this ${target} will currently be visible to everyone.`,
+                            `Would you like to make them ephemerial (only visible to the user of the command)?`,
+                          ].join("\n"),
+                      success: `Commands will now be ${
+                        ephemeral ? "visible to everyone" : "ephemeral"
+                      }!`,
+                      cancel: `Command visibility change cancelled!`,
+                      error: `Hm. Something went wrong while changing command visibility. Maybe try again?`,
+                      action: sharedEntryUpdate({
+                        server_id: interaction.guild!.id,
+                        channel_id: interaction.channel!.id,
+                        currentEntry,
+                        source,
+                        target,
+                        updateObject: () => ({ ephemeral: !ephemeral }),
+                      }),
+                    });
+                  }
+                ),
                 (t) => TE.fromTask(t)
               );
             }

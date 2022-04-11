@@ -5,6 +5,7 @@ import {
   MessagePayload,
 } from "discord.js";
 import { fetchSharedEntry } from "./sql-connections";
+import { checkChannelSendPerms } from "./helpers/general";
 
 type Options = Parameters<CommandInteraction["reply"]>[0];
 export type WrappedReplies = {
@@ -17,16 +18,18 @@ export type WrappedReplies = {
 export async function interactionWrapper(
   interaction: CommandInteraction
 ): Promise<WrappedReplies> {
-  const defaultEphemeral = interaction.guildId
-    ? (
-        await fetchSharedEntry({
-          target: "channel",
-          server_id: interaction.guildId,
-          channel_id: interaction.channelId,
-          item: "ephemeral",
-        })
-      )[2] ?? true
-    : false;
+  const defaultEphemeral =
+    checkChannelSendPerms(interaction) &&
+    (interaction.guildId
+      ? (
+          await fetchSharedEntry({
+            target: "channel",
+            server_id: interaction.guildId,
+            channel_id: interaction.channelId,
+            item: "ephemeral",
+          })
+        )[2] ?? false
+      : false);
   const wrapOptions = defaultEphemeral
     ? (o: Options): Options =>
         typeof o === "string"
