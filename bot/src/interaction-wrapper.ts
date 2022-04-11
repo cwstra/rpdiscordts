@@ -19,7 +19,7 @@ export async function interactionWrapper(
   interaction: CommandInteraction
 ): Promise<WrappedReplies> {
   const defaultEphemeral =
-    checkChannelSendPerms(interaction) &&
+    !checkChannelSendPerms(interaction) ||
     (interaction.guildId
       ? (
           await fetchSharedEntry({

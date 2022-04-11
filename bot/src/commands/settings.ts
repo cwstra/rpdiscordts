@@ -464,7 +464,7 @@ module.exports = makeCommand({
                   ([
                     source,
                     currentEntry,
-                    ephemeral = checkChannelSendPerms(interaction),
+                    ephemeral = !checkChannelSendPerms(interaction),
                   ]) => {
                     return doBaseYesNoDialog(interaction, wrapped, {
                       query: ephemeral
