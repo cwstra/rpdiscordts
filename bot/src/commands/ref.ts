@@ -36,8 +36,14 @@ const getCodexPrefix = <
   interaction: { guild, channel },
 }: State) =>
   pipe(
-    () => fetchSharedEntry("channel", guild.id, channel?.id),
-    T.chain(([, e]) => TO.fromNullable(e?.codex)),
+    () =>
+      fetchSharedEntry({
+        target: "channel",
+        server_id: guild.id,
+        channel_id: channel?.id,
+        item: "codex",
+      }),
+    T.chain(([, , codex]) => TO.fromNullable(codex)),
     TE.fromTaskOption(
       () => "Please select a codex for this server or channel."
     ),

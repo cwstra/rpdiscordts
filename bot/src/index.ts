@@ -53,7 +53,7 @@ client.on("interactionCreate", async (interaction) => {
       insert into command_usage(name, uses)
       values (${interaction.commandName}, 1)
       on conflict (name)
-      do update set uses = uses + 1
+      do update set command_usage.uses = command_usage.uses + 1
     `);
     await User.tables
       .unique_users(User.db)

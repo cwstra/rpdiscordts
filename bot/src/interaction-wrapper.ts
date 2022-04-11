@@ -19,12 +19,13 @@ export async function interactionWrapper(
 ): Promise<WrappedReplies> {
   const defaultEphemeral = interaction.guildId
     ? (
-        await fetchSharedEntry(
-          "channel",
-          interaction.guildId,
-          interaction.channelId
-        )
-      )[1]?.ephemeral ?? true
+        await fetchSharedEntry({
+          target: "channel",
+          server_id: interaction.guildId,
+          channel_id: interaction.channelId,
+          item: "ephemeral",
+        })
+      )[2] ?? true
     : false;
   const wrapOptions = defaultEphemeral
     ? (o: Options): Options =>

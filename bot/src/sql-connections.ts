@@ -34,6 +34,7 @@ import UserSchema, {
 } from "./generated_schema/user_data";
 import Channels from "./generated_schema/user_data/channels";
 import Servers from "./generated_schema/user_data/servers";
+import { pipe } from "fp-ts/lib/function";
 
 export { sql };
 
@@ -86,20 +87,80 @@ process.once("SIGTERM", () => {
   });
 });
 
-export async function fetchSharedEntry(
-  target: "channel" | "server",
-  server_id: string,
-  channel_id?: string
-): Promise<["channel" | "server", Servers | Channels | null]> {
+export async function fetchSharedEntry(params: {
+  target: "channel" | "server";
+  server_id: string;
+  channel_id?: string;
+}): Promise<["channel" | "server", Servers | Channels | null]>;
+export async function fetchSharedEntry<
+  Item extends keyof Channels & keyof Servers
+>(params: {
+  target: "channel" | "server";
+  server_id: string;
+  channel_id?: string;
+  item: Item;
+}): Promise<
+  [
+    "channel" | "server",
+    Servers | Channels | null,
+    Servers[Item] | Channels[Item] | null
+  ]
+>;
+export async function fetchSharedEntry<
+  Item extends Exclude<keyof Channels, keyof Servers>
+>(params: {
+  target: "channel" | "server";
+  server_id: string;
+  channel_id?: string;
+  item: Item;
+}): Promise<["channel" | "server", Channels | null, Channels[Item] | null]>;
+export async function fetchSharedEntry<
+  Item extends Exclude<keyof Servers, keyof Channels>
+>(params: {
+  target: "channel" | "server";
+  server_id: string;
+  channel_id?: string;
+  item: Item;
+}): Promise<["channel" | "server", Servers | null, Servers[Item] | null]>;
+export async function fetchSharedEntry({
+  target,
+  server_id,
+  channel_id,
+  item,
+}: {
+  target: "channel" | "server";
+  server_id: string;
+  channel_id?: string;
+  item?: keyof Channels | keyof Servers;
+}): Promise<
+  | ["channel" | "server", Servers | Channels | null]
+  | [
+      "channel" | "server",
+      Servers | Channels | null,
+      Servers[keyof Servers] | Channels[keyof Channels] | null
+    ]
+> {
   const channelEntries =
-    target === "channel" &&
-    channel_id &&
-    (await User.tables.channels(User.db).findOne({ server_id, channel_id }));
+    target === "channel" && channel_id
+      ? await User.tables.channels(User.db).findOne({ server_id, channel_id })
+      : undefined;
+  const channelValue =
+    channelEntries && item ? channelEntries[item] : channelEntries;
   return [
     channelEntries ? "channel" : "server",
-    channelEntries ||
-      (await User.tables.servers(User.db).findOne({ server_id })),
-  ];
+    ...(channelValue
+      ? item
+        ? [channelEntries ?? null, channelValue ?? null]
+        : [channelEntries ?? null]
+      : pipe(
+          await User.tables.servers(User.db).findOne({ server_id }),
+          item
+            ? (e) =>
+                e && item in e ? [e, e[item as keyof Servers]] : [null, null]
+            : (e) => [e]
+        )),
+    // resolve this later
+  ] as any;
 }
 
 export async function fetchChannelEntry(

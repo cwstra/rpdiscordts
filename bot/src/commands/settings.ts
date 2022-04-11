@@ -180,7 +180,13 @@ module.exports = makeCommand({
                   ? options.options.charsign
                   : options.options.charsep;
               return pipe(
-                () => fetchSharedEntry(target, guild.id, channel?.id),
+                () =>
+                  // TODO: Resolve this so we don't have weird server/channel interactions
+                  fetchSharedEntry({
+                    target,
+                    server_id: guild.id,
+                    channel_id: channel?.id,
+                  }),
                 T.chain(([source, currentEntry]) => {
                   const [currentSymbols, otherSymbols] = [
                     currentEntry?.[`${subCommand}s`],
@@ -243,13 +249,19 @@ module.exports = makeCommand({
               const target = options.options.target;
               const { guild, channel } = interaction;
               return pipe(
-                () => fetchSharedEntry(target, guild.id, channel?.id),
-                T.chain(([source, currentEntry]) =>
+                () =>
+                  fetchSharedEntry({
+                    target,
+                    server_id: guild.id,
+                    channel_id: channel?.id,
+                    item: "codex",
+                  }),
+                T.chain(([source, currentEntry, codex]) =>
                   pipe(
                     () => User.tables.codex_list(User.db).find().all(),
                     T.map((users) => ({
                       codexList: sortBy((c) => c.display_name, users),
-                      currentCodex: currentEntry?.codex ?? null,
+                      currentCodex: codex ?? null,
                       currentEntry,
                       source,
                     }))
@@ -365,9 +377,14 @@ module.exports = makeCommand({
               const target = options.options.target;
               const { guild, channel } = interaction;
               return pipe(
-                () => fetchSharedEntry(target, guild.id, channel?.id),
-                T.chain(([source, currentEntry]) => {
-                  const { freeze_on_timeout = false } = currentEntry ?? {};
+                () =>
+                  fetchSharedEntry({
+                    target,
+                    server_id: guild.id,
+                    channel_id: channel?.id,
+                    item: "freeze_on_timeout",
+                  }),
+                T.chain(([source, currentEntry, freeze_on_timeout = false]) => {
                   return doBaseYesNoDialog(interaction, wrapped, {
                     query: [
                       `Currently, the bot will ${
@@ -436,9 +453,14 @@ module.exports = makeCommand({
               const target = options.options.target;
               const { guild, channel } = interaction;
               return pipe(
-                () => fetchSharedEntry(target, guild.id, channel?.id),
-                T.chain(([source, currentEntry]) => {
-                  const ephemeral = currentEntry?.ephemeral ?? true;
+                () =>
+                  fetchSharedEntry({
+                    target,
+                    server_id: guild.id,
+                    channel_id: channel?.id,
+                    item: "ephemeral",
+                  }),
+                T.chain(([source, currentEntry, ephemeral = true]) => {
                   return doBaseYesNoDialog(interaction, wrapped, {
                     query: ephemeral
                       ? [
