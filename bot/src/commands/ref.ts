@@ -215,7 +215,7 @@ module.exports = {
                    select id
                    from ${tableId}
                    where id % ${entry}
-                   ordee by id <-> ${entry}
+                   order by id <-> ${entry}
                    limit 10`),
               (): string[] => []
             )
