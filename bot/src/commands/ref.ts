@@ -1,16 +1,16 @@
-import { wrappedTask } from "../interaction-wrapper";
+import { wrappedCommand } from "../interaction-wrapper";
 import { makeCommand } from "../make-command";
 import { fetchSharedEntry, Server, sql, User } from "../sql-connections";
-import { pipe } from "fp-ts/function";
+import { identity, pipe } from "fp-ts/function";
 import * as E from "fp-ts/Either";
 import * as T from "fp-ts/Task";
 import * as TE from "fp-ts/TaskEither";
 import * as TO from "fp-ts/TaskOption";
-import { init, last, splitEvery, splitWhen, sum } from "rambda";
+import { init, last, splitWhen, sum } from "rambda";
 import { checkForGuildAndMember } from "../helpers/commands";
 import { isKeyOf } from "../helpers/general";
 import { sendPaginatedEmbeds } from "../helpers/paginator";
-import { CommandInteraction, Guild } from "discord.js";
+import { Interaction, Guild } from "discord.js";
 import * as fuzzysort from "fuzzysort";
 
 // Temporary(?) measure while we wait for a way to query from views programatically
@@ -30,7 +30,7 @@ const splitString = (str: string, len: number) => {
 
 const getCodexPrefix = <
   State extends {
-    interaction: CommandInteraction & { guild: Guild };
+    interaction: Interaction & { guild: Guild };
   }
 >({
   interaction: { guild, channel },
@@ -76,6 +76,7 @@ module.exports = {
           type: "string",
           description: "The entry title text to search for.",
           required: true,
+          autoComplete: true,
         },
         selected_fields: {
           type: "string",
@@ -84,7 +85,7 @@ module.exports = {
           required: false,
         },
       },
-      execute: wrappedTask((args) => {
+      execute: wrappedCommand((args) => {
         return pipe(
           args,
           checkForGuildAndMember,
@@ -195,6 +196,44 @@ module.exports = {
           })
         );
       }),
+      autoComplete: (interaction, { options }) =>
+        pipe(
+          { interaction },
+          checkForGuildAndMember,
+          TE.bind("codexPrefix", getCodexPrefix),
+          TE.bindW("tableId", ({ codexPrefix }) =>
+            pipe(lookup_view(codexPrefix), TE.of)
+          ),
+          TE.mapLeft((): string[] => []),
+          TE.chainNullableK<string[]>([])((args) =>
+            options.entry ? { ...args, entry: options.entry } : undefined
+          ),
+          TE.chain(({ tableId, entry }) =>
+            TE.tryCatch(
+              (): Promise<{ id: string }[]> =>
+                Server.db.query(sql`
+                   select id
+                   from ${tableId}
+                   where id % ${entry}
+                   ordee by id <-> ${entry}
+                   limit 10`),
+              (): string[] => []
+            )
+          ),
+          T.map((res) =>
+            pipe(
+              res,
+              E.map((a) => a.map((e) => e.id)),
+              E.getOrElse(identity)
+            )
+          ),
+          T.chain(
+            (results) => () =>
+              interaction.respond(
+                results.map((value) => ({ name: value, value }))
+              )
+          )
+        )(),
     }),
     makeCommand({
       name: "top",
@@ -212,7 +251,7 @@ module.exports = {
           required: false,
         },
       },
-      execute: wrappedTask((args) => {
+      execute: wrappedCommand((args) => {
         return pipe(
           args,
           checkForGuildAndMember,

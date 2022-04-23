@@ -8,11 +8,11 @@ import { fetchSharedEntry, User } from "../sql-connections";
 import { makeMessageActions } from "../make-message-actions";
 import {
   checkForGuildAndMember,
-  CommandInteractionFromGuild,
+  InteractionFromGuild,
 } from "../helpers/commands";
 import { assert, checkChannelSendPerms, trace } from "../helpers/general";
 import { compact, findApply } from "../helpers/array";
-import { WrappedReplies, wrappedTask } from "../interaction-wrapper";
+import { WrappedReplies, wrappedCommand } from "../interaction-wrapper";
 import { equals, sortBy } from "rambda";
 import Servers from "../generated_schema/user_data/servers";
 import Channels from "../generated_schema/user_data/channels";
@@ -94,7 +94,7 @@ module.exports = makeCommand({
       },
     },
   },
-  execute: wrappedTask((args) =>
+  execute: wrappedCommand((args) =>
     pipe(
       args,
       checkForGuildAndMember,
@@ -507,9 +507,7 @@ module.exports = makeCommand({
   ),
 });
 
-const checkForAdminRole = <
-  Scope extends { interaction: CommandInteractionFromGuild }
->(
+const checkForAdminRole = <Scope extends { interaction: InteractionFromGuild }>(
   isForRoleChange?: boolean
 ) =>
   TE.chain((scope: Scope) => {

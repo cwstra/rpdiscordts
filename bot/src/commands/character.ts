@@ -1,13 +1,13 @@
 import { anyOf } from "@databases/pg-typed";
 import {
   checkForGuildAndMember,
-  CommandInteractionFromGuild,
+  InteractionFromGuild,
 } from "../helpers/commands";
 import { stringListing } from "../helpers/string";
-import { wrappedTask } from "../interaction-wrapper";
+import { wrappedCommand } from "../interaction-wrapper";
 import { makeCommand } from "../make-command";
-import { User } from "../sql-connections";
-import { pipe, tuple } from "fp-ts/function";
+import { sql, User } from "../sql-connections";
+import { identity, pipe, tuple } from "fp-ts/function";
 import * as E from "fp-ts/Either";
 import * as T from "fp-ts/Task";
 import * as TE from "fp-ts/TaskEither";
@@ -15,6 +15,7 @@ import Characters from "../generated_schema/user_data/characters";
 import { partitionMap } from "fp-ts/lib/Array";
 import { sanitizeTask } from "../helpers/task";
 import { GuildMember, Permissions } from "discord.js";
+import { flattenedUnion } from "../helpers/types";
 
 const tripleBackTick = "```";
 
@@ -47,6 +48,7 @@ module.exports = makeCommand({
           type: "string",
           description: "The name of the character.",
           required: true,
+          autoComplete: true,
         },
         attributes: {
           type: "string",
@@ -63,6 +65,7 @@ module.exports = makeCommand({
           type: "string",
           description: "The name of the character.",
           required: true,
+          autoComplete: true,
         },
         new_name: {
           type: "string",
@@ -80,6 +83,7 @@ module.exports = makeCommand({
           type: "string",
           description: "The name of the character.",
           required: true,
+          autoComplete: true,
         },
         attributes: {
           type: "string",
@@ -96,11 +100,12 @@ module.exports = makeCommand({
           type: "string",
           description: "The name of the character.",
           required: true,
+          autoComplete: true,
         },
       },
     },
   },
-  execute: wrappedTask((args) => {
+  execute: wrappedCommand((args) => {
     return pipe(
       args,
       checkForGuildAndMember,
@@ -116,7 +121,6 @@ module.exports = makeCommand({
                   character_name: name,
                 }),
               TE.fromTask,
-              // TODO: Replace with TE.fromNullable when that's available
               TE.filterOrElse(
                 (currentCharacter): currentCharacter is null =>
                   !currentCharacter,
@@ -337,13 +341,66 @@ module.exports = makeCommand({
       TE.getOrElse((message) => () => args.wrapped.reply(message))
     );
   }),
+  autoComplete: (args, opts) => {
+    const flatOptions = flattenedUnion(opts.options);
+    const name = flatOptions[opts.focusedOption] || undefined;
+    return pipe(
+      TE.tryCatch(
+        (): Promise<{ character_name: string }[]> =>
+          User.db.query(
+            name
+              ? opts.subCommand === "view"
+                ? sql`
+              select character_name
+              from characters
+              where server_id = ${args.guildId}
+              and to_tsquery(${name} || ':*') @@ to_tsvector(character_name)
+              order by ts_rank(to_tsvector(character_name), to_tsquery(${name} || ':*')) desc
+              limit 10;`
+                : sql`
+              select character_name
+              from characters
+              where server_id = ${args.guildId}
+              and member_id = ${args.user.id}
+              and to_tsquery(${name} || ':*') @@ to_tsvector(character_name)
+              order by ts_rank(to_tsvector(character_name), to_tsquery(${name} || ':*')) desc
+              limit 10;`
+              : opts.subCommand === "view"
+              ? sql`
+              select character_name
+              from characters
+              where server_id = ${args.guildId}
+              order by character_name
+              limit 10;`
+              : sql`
+              select character_name
+              from characters
+              where server_id = ${args.guildId}
+              and member_id = ${args.user.id}
+              order by character_name
+              limit 10;`
+          ),
+        (): { character_name: string }[] => []
+      ),
+      T.map((res) => pipe(res, E.getOrElse(identity))),
+      T.chain(
+        (characters) => () =>
+          args.respond(
+            characters.map(({ character_name: name }) => ({
+              name,
+              value: name,
+            }))
+          )
+      )
+    )();
+  },
 });
 function getExistingCharacter({
   name,
   interaction,
 }: {
   name: string;
-  interaction: CommandInteractionFromGuild;
+  interaction: InteractionFromGuild;
 }) {
   return pipe(
     () =>
@@ -356,7 +413,7 @@ function getExistingCharacter({
     )
   );
 }
-function adminGuard(interaction: CommandInteractionFromGuild) {
+function adminGuard(interaction: InteractionFromGuild) {
   return TE.chain((currentCharacter: Characters) =>
     currentCharacter.member_id === interaction.member.id
       ? TE.of(currentCharacter)

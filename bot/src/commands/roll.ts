@@ -1,7 +1,7 @@
 import { anyOf } from "@databases/pg-typed";
 import { compact, compactMap, rest } from "../helpers/array";
 import { midStringCharacters } from "../helpers/string";
-import { wrappedTask } from "../interaction-wrapper";
+import { wrappedCommand } from "../interaction-wrapper";
 import { makeCommand } from "../make-command";
 import { fetchChannelEntry, User } from "../sql-connections";
 import { pipe } from "fp-ts/function";
@@ -39,7 +39,7 @@ module.exports = makeCommand({
       required: true,
     },
   },
-  execute: wrappedTask((args) => {
+  execute: wrappedCommand((args) => {
     return pipe(
       T.of(args),
       T.chainFirst(

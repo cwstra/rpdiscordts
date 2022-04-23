@@ -1,15 +1,15 @@
 import * as TE from "fp-ts/TaskEither";
-import { CommandInteraction, Guild, GuildMember } from "discord.js";
+import { Interaction, Guild, GuildMember } from "discord.js";
 import { pipe } from "fp-ts/function";
 import { NonNullProps } from "./types";
 
-export type CommandInteractionFromGuild = CommandInteraction & {
+export type InteractionFromGuild = Interaction & {
   guild: Guild;
   member: GuildMember;
 };
 
 export const checkForGuildAndMember = <
-  Scope extends { interaction: CommandInteraction }
+  Scope extends { interaction: Interaction }
 >(
   scope: Scope
 ) =>
@@ -19,7 +19,7 @@ export const checkForGuildAndMember = <
       (
         s: Scope
       ): s is Scope & {
-        interaction: NonNullProps<CommandInteraction, "guild" | "member">;
+        interaction: NonNullProps<Interaction, "guild" | "member">;
       } => !!(s.interaction.guild && s.interaction.member),
       (s) =>
         `Sorry ${s.interaction.user.username}, this command only works in servers.`
@@ -28,7 +28,7 @@ export const checkForGuildAndMember = <
       (
         s
       ): s is Scope & {
-        interaction: CommandInteractionFromGuild;
+        interaction: InteractionFromGuild;
       } => "guild" in s.interaction.member,
       () => `Hm. I didn't get a proper member from that interaction.`
     )

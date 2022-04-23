@@ -1,5 +1,7 @@
 import {
+  ApplicationCommandOptionChoice,
   ApplicationCommandPermissionData,
+  AutocompleteInteraction,
   Channel,
   CommandInteraction,
   Role,
@@ -7,20 +9,24 @@ import {
 } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { flattenedUnion } from "./helpers/general";
+import { Simplify } from "./helpers/types";
 
 namespace Option {
   type Base = { description: string; required: boolean };
   export type String = Base & {
     type: "string";
     choices?: [name: string, value: string][];
+    autoComplete?: boolean;
   };
   export type Integer = Base & {
     type: "integer";
     choices?: [name: string, value: number][];
+    autoComplete?: boolean;
   };
   export type Number = Base & {
     type: "number";
     choices?: [name: string, value: number][];
+    autoComplete?: boolean;
   };
   export type Boolean = Base & {
     type: "boolean";
@@ -91,28 +97,87 @@ type OptionResultMap<M extends OptionMap> = {
     : never;
 };
 
-const optionMapToResultMap = (i: CommandInteraction, options: OptionMap) =>
+type AutoOptionResultMap<M extends OptionMap> = {
+  [N in keyof M]: M[N] extends infer O
+    ? O extends { autoComplete?: infer T }
+      ? true extends T
+        ? N
+        : never
+      : never
+    : never;
+}[keyof M] extends infer Focused
+  ? Focused extends never
+    ? never
+    : {
+        options: {
+          [N in keyof M]: M[N] extends infer O
+            ? O extends Option
+              ?
+                  | (O extends Option.String
+                      ?
+                          | (O extends { choices: [string, infer Value][] }
+                              ? Value
+                              : string)
+                          | undefined
+                      : O extends Option.Integer
+                      ? O extends { choices: [string, infer Value][] }
+                        ? Value
+                        : number
+                      : O extends Option.Number
+                      ? O extends { choices: [string, infer Value][] }
+                        ? Value
+                        : number
+                      : O extends Option.Boolean
+                      ? boolean
+                      : O extends Option.User
+                      ? User
+                      : O extends Option.Channel
+                      ? Channel
+                      : O extends Option.Role
+                      ? Role
+                      : O extends Option.Mentionable
+                      ? NonNullable<
+                          ReturnType<
+                            CommandInteraction["options"]["getMentionable"]
+                          >
+                        >
+                      : never)
+                  | null
+              : never
+            : never;
+        };
+        focusedOption: Focused;
+      }
+  : never;
+
+const optionMapToResultMap = (
+  i: CommandInteraction | AutocompleteInteraction,
+  options: OptionMap,
+  forAuto?: ApplicationCommandOptionChoice
+) =>
   Object.fromEntries(
     Object.entries(options).map(([name, value]) => [
       name,
       (() => {
+        const req = forAuto ? false : value.required;
+        if (name === forAuto?.name) return forAuto?.value;
         switch (value.type) {
           case "string":
-            return i.options.getString(name, value.required);
+            return i.options.getString(name, req);
           case "integer":
-            return i.options.getInteger(name, value.required);
+            return i.options.getInteger(name, req);
           case "number":
-            return i.options.getNumber(name, value.required);
+            return i.options.getNumber(name, req);
           case "boolean":
-            return i.options.getBoolean(name, value.required);
+            return i.options.getBoolean(name, req);
           case "user":
-            return i.options.getUser(name, value.required);
+            return i.options.getUser(name, req);
           case "channel":
-            return i.options.getChannel(name, value.required);
+            return i.options.getChannel(name, req);
           case "role":
-            return i.options.getRole(name, value.required);
+            return i.options.getRole(name, req);
           case "mentionable":
-            return i.options.getMentionable(name, value.required);
+            return i.options.getMentionable(name, req);
           default: {
             const e: never = value;
             return e;
@@ -121,7 +186,6 @@ const optionMapToResultMap = (i: CommandInteraction, options: OptionMap) =>
       })(),
     ])
   );
-
 type EmptySubCommand = { description: string };
 type OptionSubCommand<M extends OptionMap> = {
   description: string;
@@ -139,14 +203,22 @@ export function makeSubCommands<Mapping extends SubCommandMap>(
   return mapping;
 }
 
-//type SubCommandHelper
 export type SubCommandResult<
   SCMap extends SubCommandMap,
   Name
 > = Name extends keyof SCMap
   ? SCMap[Name] extends OptionSubCommand<infer O>
-    ? { subCommand: Name; options: OptionResultMap<O> }
+    ? { subCommand: Name; options: Simplify<OptionResultMap<O>> }
     : { subCommand: Name }
+  : never;
+
+export type SubAutoCommandResult<
+  SCMap extends SubCommandMap,
+  Name
+> = Name extends keyof SCMap
+  ? SCMap[Name] extends OptionSubCommand<infer O>
+    ? { subCommand: Name } & Simplify<AutoOptionResultMap<O>>
+    : {}
   : never;
 
 type SubCommandGroupArgs<M extends SubCommandMap> = {
@@ -171,26 +243,44 @@ type SubCommandGroupResult<
     : never
   : never;
 
-type BaseCommand<Opts> = {
+type SubAutoCommandGroupResult<
+  SCGMap extends SubCommandGroupMap,
+  Name
+> = Name extends keyof SCGMap
+  ? SCGMap[Name] extends SubCommandGroupArgs<infer SCMap>
+    ? { group: Name } & SubAutoCommandResult<SCMap, keyof SCMap>
+    : never
+  : never;
+
+type BaseCommand<Opts, AutoOpts = never> = {
   name: string;
   description: string;
   defaultPermission?: boolean;
   permissions?: ApplicationCommandPermissionData[];
   execute: (interaction: CommandInteraction, options: Opts) => Promise<void>;
+  autoComplete?: (
+    interaction: AutocompleteInteraction,
+    options: AutoOpts
+  ) => Promise<void>;
 };
 
-type BasicCommand<M extends OptionMap> = BaseCommand<OptionResultMap<M>> & {
+type BasicCommand<M extends OptionMap> = BaseCommand<
+  OptionResultMap<M>,
+  AutoOptionResultMap<M>
+> & {
   options?: M;
 };
 
 export type FlatCommand<M extends SubCommandMap> = BaseCommand<
-  SubCommandResult<M, keyof M>
+  SubCommandResult<M, keyof M>,
+  SubAutoCommandResult<M, keyof M>
 > & {
   subcommands: M;
 };
 
 type GroupCommand<SubCommandGroups extends SubCommandGroupMap> = BaseCommand<
-  SubCommandGroupResult<SubCommandGroups, keyof SubCommandGroups>
+  SubCommandGroupResult<SubCommandGroups, keyof SubCommandGroups>,
+  SubAutoCommandGroupResult<SubCommandGroups, keyof SubCommandGroups>
 > & {
   subcommandGroups: SubCommandGroups;
 };
@@ -200,12 +290,13 @@ type JointCommand<
   SubCommands extends SubCommandMap
 > = BaseCommand<
   | SubCommandGroupResult<SubCommandGroups, keyof SubCommandGroups>
-  | SubCommandResult<SubCommands, keyof SubCommands>
+  | SubCommandResult<SubCommands, keyof SubCommands>,
+  | SubAutoCommandGroupResult<SubCommandGroups, keyof SubCommandGroups>
+  | SubAutoCommandResult<SubCommands, keyof SubCommands>
 > & {
   subcommandGroups: SubCommandGroups;
   subcommands: SubCommands;
 };
-
 function addOption(
   builder:
     | SlashCommandBuilder
@@ -222,6 +313,7 @@ function addOption(
         o.setName(name).setDescription(option.description);
         if (option.required) o.setRequired(true);
         if (option.choices) o.addChoices(option.choices);
+        if (option.autoComplete) o.setAutocomplete(true);
         return o;
       });
       return;
@@ -230,6 +322,7 @@ function addOption(
         o.setName(name).setDescription(option.description);
         if (option.required) o.setRequired(true);
         if (option.choices) o.addChoices(option.choices);
+        if (option.autoComplete) o.setAutocomplete(true);
         return o;
       });
       return;
@@ -238,6 +331,7 @@ function addOption(
         o.setName(name).setDescription(option.description);
         if (option.required) o.setRequired(true);
         if (option.choices) o.addChoices(option.choices);
+        if (option.autoComplete) o.setAutocomplete(true);
         return o;
       });
       return;
@@ -321,6 +415,7 @@ export type CommandDef = {
   data: SlashCommandBuilder;
   permissions?: ApplicationCommandPermissionData[];
   execute: (interaction: CommandInteraction) => Promise<void>;
+  autoComplete?: (interaction: AutocompleteInteraction) => Promise<void>;
 };
 
 export function makeCommand<
@@ -356,7 +451,10 @@ export function makeCommand(
       Object.entries(args.subcommands).forEach(([n, subCommandData]) =>
         addSubCommand(builder, n, subCommandData)
       );
-      const parseOptions = (i: CommandInteraction) => {
+
+      const parseOptions = (
+        i: CommandInteraction | AutocompleteInteraction
+      ) => {
         const subCommand = i.options.getSubcommand();
         const group =
           subCommand in args.subcommands
@@ -367,69 +465,110 @@ export function makeCommand(
           : flattenedUnion(
               args.subcommandGroups[group].subCommands[subCommand]
             );
+        const focused = i.isAutocomplete()
+          ? i.options.getFocused(true)
+          : undefined;
         return {
           group,
           subCommand,
-          options: options ? optionMapToResultMap(i, options) : undefined,
-        } as
-          | SubCommandGroupResult<SubCommandGroupMap, string>
-          | SubCommandResult<SubCommandMap, string>;
+          options: options
+            ? optionMapToResultMap(i, options, focused)
+            : undefined,
+          focusedOption: focused?.name,
+        } as any;
       };
       return {
         data: builder,
         permissions: args.permissions,
         execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
+        autoComplete:
+          args.autoComplete &&
+          (async (i: AutocompleteInteraction) =>
+            await args.autoComplete?.(i, parseOptions(i))),
       };
     } else {
-      const parseOptions = (i: CommandInteraction) => {
+      const parseOptions = (
+        i: CommandInteraction | AutocompleteInteraction
+      ) => {
         const group = i.options.getSubcommandGroup() ?? undefined;
         const subCommand = i.options.getSubcommand();
         const { options } = flattenedUnion(
           args.subcommandGroups[group].subCommands[subCommand]
         );
+        const focused = i.isAutocomplete()
+          ? i.options.getFocused(true)
+          : undefined;
         return {
           group,
           subCommand,
-          options: options ? optionMapToResultMap(i, options) : undefined,
-        } as SubCommandGroupResult<SubCommandGroupMap, string>;
+          options: options
+            ? optionMapToResultMap(i, options, focused)
+            : undefined,
+          focusedOption: focused?.name,
+        } as any;
       };
       return {
         data: builder,
         permissions: args.permissions,
         execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
+        autoComplete:
+          args.autoComplete &&
+          (async (i: AutocompleteInteraction) =>
+            await args.autoComplete?.(i, parseOptions(i))),
       };
     }
   } else if ("subcommands" in args) {
     Object.entries(args.subcommands ?? {}).forEach(([n, subCommandData]) =>
       addSubCommand(builder, n, subCommandData)
     );
-    const parseOptions = (i: CommandInteraction) => {
+    const parseOptions = (i: CommandInteraction | AutocompleteInteraction) => {
       const subCommandName = i.options.getSubcommand();
       const subCommand =
         args.subcommands[subCommandName as keyof typeof args.subcommands];
       const { options } = flattenedUnion(subCommand);
+      const focused = i.isAutocomplete()
+        ? i.options.getFocused(true)
+        : undefined;
       return {
         subCommand: subCommandName,
-        options: options ? optionMapToResultMap(i, options) : undefined,
-      };
+        options: options
+          ? optionMapToResultMap(i, options, focused)
+          : undefined,
+        focusedOption: focused?.name,
+      } as any;
     };
     return {
       data: builder,
       permissions: args.permissions,
       execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
+      autoComplete:
+        args.autoComplete &&
+        (async (i: AutocompleteInteraction) =>
+          await args.autoComplete?.(i, parseOptions(i))),
     };
   } else {
     Object.entries(args.options ?? {}).forEach(([n, o]) =>
       addOption(builder, n, o)
     );
     const parseOptions = args.options
-      ? (i: CommandInteraction) =>
-          optionMapToResultMap(i, args.options!) as OptionResultMap<OptionMap>
+      ? (i: CommandInteraction | AutocompleteInteraction) => {
+          const focused = i.isAutocomplete()
+            ? i.options.getFocused(true)
+            : undefined;
+          return {
+            options: optionMapToResultMap(i, args.options!, focused),
+            focusedOption: focused?.name,
+          } as any;
+        }
       : () => ({});
     return {
       data: builder,
       permissions: args.permissions,
       execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
+      autoComplete:
+        args.autoComplete &&
+        (async (i: AutocompleteInteraction) =>
+          await args.autoComplete?.(i, parseOptions(i))),
     };
   }
 }

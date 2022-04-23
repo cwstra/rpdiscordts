@@ -70,7 +70,7 @@ export const wrappedExecute =
     await exec({ interaction, options, wrapped });
   };
 
-export const wrappedTask =
+export const wrappedCommand =
   <Options>(
     task: (args: {
       interaction: CommandInteraction;
