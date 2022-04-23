@@ -8,7 +8,7 @@ import * as TE from "fp-ts/TaskEither";
 import * as TO from "fp-ts/TaskOption";
 import { init, last, splitWhen, sum } from "rambda";
 import { checkForGuildAndMember } from "../helpers/commands";
-import { isKeyOf } from "../helpers/general";
+import { isKeyOf, trace } from "../helpers/general";
 import { sendPaginatedEmbeds } from "../helpers/paginator";
 import { Interaction, Guild } from "discord.js";
 import * as fuzzysort from "fuzzysort";
@@ -86,6 +86,7 @@ module.exports = {
         },
       },
       execute: wrappedCommand((args) => {
+        console.log(args.options);
         return pipe(
           args,
           checkForGuildAndMember,
@@ -106,7 +107,7 @@ module.exports = {
                   Server.db.query(sql`
               select embed
               from ${tableId}
-              where id % ${entry}
+              where id % ${trace(entry)}
               order by id <-> ${entry}
               limit 1`),
                 T.map(

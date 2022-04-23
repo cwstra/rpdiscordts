@@ -555,10 +555,12 @@ export function makeCommand(
           const focused = i.isAutocomplete()
             ? i.options.getFocused(true)
             : undefined;
-          return {
-            options: optionMapToResultMap(i, args.options!, focused),
-            focusedOption: focused?.name,
-          } as any;
+          return focused
+            ? {
+                options: optionMapToResultMap(i, args.options!, focused),
+                focusedOption: focused?.name,
+              }
+            : (optionMapToResultMap(i, args.options!, focused) as any);
         }
       : () => ({});
     return {
