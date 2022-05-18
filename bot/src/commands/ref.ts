@@ -8,7 +8,7 @@ import * as TE from "fp-ts/TaskEither";
 import * as TO from "fp-ts/TaskOption";
 import { init, last, splitWhen, sum } from "rambda";
 import { checkForGuildAndMember } from "../helpers/commands";
-import { isKeyOf, trace } from "../helpers/general";
+import { isKeyOf } from "../helpers/general";
 import { sendPaginatedEmbeds } from "../helpers/paginator";
 import { Interaction, Guild } from "discord.js";
 import * as fuzzysort from "fuzzysort";
