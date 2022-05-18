@@ -86,7 +86,6 @@ module.exports = {
         },
       },
       execute: wrappedCommand((args) => {
-        console.log(args.options);
         return pipe(
           args,
           checkForGuildAndMember,
@@ -107,7 +106,7 @@ module.exports = {
                   Server.db.query(sql`
               select embed
               from ${tableId}
-              where id % ${trace(entry)}
+              where id % ${entry}
               order by id <-> ${entry}
               limit 1`),
                 T.map(
