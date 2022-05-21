@@ -214,8 +214,8 @@ module.exports = {
                 Server.db.query(sql`
                    select id
                    from ${tableId}
-                   where split_part(id, ' (', 1) % ${entry}
-                   and embed ->> 'title' not like '% (Disambiguation)'
+                   where (id % ${entry} or split_part(id, ' (', 1) % ${entry})
+                   and (embed ->> 'title' is null or embed ->> 'title' not like '% (Disambiguation)')
                    order by id <-> ${entry}
                    limit 10`),
               (): string[] => []
