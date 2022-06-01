@@ -519,7 +519,7 @@ const checkForAdminRole = <Scope extends { interaction: InteractionFromGuild }>(
       },
     } = scope;
     const isAdmin =
-      member.id === ownerId &&
+      member.id === ownerId ||
       member.permissions.has(Permissions.FLAGS.ADMINISTRATOR);
     return pipe(
       isAdmin && !isForRoleChange
