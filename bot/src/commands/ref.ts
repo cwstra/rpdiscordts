@@ -9,7 +9,7 @@ import * as TO from "fp-ts/TaskOption";
 import * as O from "fp-ts/Option";
 import { init, last, splitWhen, sum } from "rambda";
 import { checkForGuildAndMember } from "../helpers/commands";
-import { isKeyOf, trace } from "../helpers/general";
+import { isKeyOf } from "../helpers/general";
 import { sendPaginatedEmbeds } from "../helpers/paginator";
 import { Interaction, Guild } from "discord.js";
 import * as fuzzysort from "fuzzysort";
@@ -434,23 +434,18 @@ ${sections.join("\n")}
           ),
           TE.mapLeft((): string[] => []),
           TE.chainNullableK<string[]>([])((args) =>
-            trace(options.category)
-              ? { ...args, entry: options.category }
-              : undefined
+            options.category ? { ...args, entry: options.category } : undefined
           ),
           TE.chain(({ tableId, entry }) =>
             TE.tryCatch(
               (): Promise<{ id: string }[]> =>
                 Server.db.query(sql`
-                   select distinct category
+                   select distinct category, category <-> ${entry} as score
                    from ${tableId}
                    where (category % ${entry})
                    order by category <-> ${entry}
                    limit 10`),
-              (e): string[] => {
-                console.log(e);
-                return [];
-              }
+              (): string[] => []
             )
           ),
           T.map((res) =>
