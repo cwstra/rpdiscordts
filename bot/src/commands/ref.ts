@@ -9,7 +9,7 @@ import * as TO from "fp-ts/TaskOption";
 import * as O from "fp-ts/Option";
 import { init, last, splitWhen, sum } from "rambda";
 import { checkForGuildAndMember } from "../helpers/commands";
-import { isKeyOf } from "../helpers/general";
+import { isKeyOf, trace } from "../helpers/general";
 import { sendPaginatedEmbeds } from "../helpers/paginator";
 import { Interaction, Guild } from "discord.js";
 import * as fuzzysort from "fuzzysort";
@@ -434,7 +434,9 @@ ${sections.join("\n")}
           ),
           TE.mapLeft((): string[] => []),
           TE.chainNullableK<string[]>([])((args) =>
-            options.category ? { ...args, entry: options.category } : undefined
+            trace(options.category)
+              ? { ...args, entry: options.category }
+              : undefined
           ),
           TE.chain(({ tableId, entry }) =>
             TE.tryCatch(
