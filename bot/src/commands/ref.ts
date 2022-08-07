@@ -1,4 +1,4 @@
-import { wrappedCommand } from "../interaction-wrapper";
+import { wrappedCommand, WrappedReplies } from "../interaction-wrapper";
 import { makeCommand } from "../make-command";
 import { fetchSharedEntry, Server, sql, User } from "../sql-connections";
 import { identity, pipe } from "fp-ts/function";
@@ -6,6 +6,7 @@ import * as E from "fp-ts/Either";
 import * as T from "fp-ts/Task";
 import * as TE from "fp-ts/TaskEither";
 import * as TO from "fp-ts/TaskOption";
+import * as O from "fp-ts/Option";
 import { init, last, splitWhen, sum } from "rambda";
 import { checkForGuildAndMember } from "../helpers/commands";
 import { isKeyOf } from "../helpers/general";
@@ -14,6 +15,8 @@ import { Interaction, Guild } from "discord.js";
 import * as fuzzysort from "fuzzysort";
 
 // Temporary(?) measure while we wait for a way to query from views programatically
+const entry_list_view = (prefix: string) =>
+  sql.__dangerous__rawValue(`${prefix}.entry_list`);
 const lookup_view = (prefix: string) =>
   sql.__dangerous__rawValue(`${prefix}.lookup`);
 
@@ -65,6 +68,55 @@ const getCodexPrefix = <
       )
     )
   );
+
+const sanitizeFields = async ({
+  interaction,
+  embed,
+  wrapped,
+}: {
+  interaction: Parameters<typeof sendPaginatedEmbeds>[0]["interaction"];
+  embed: any;
+  wrapped: WrappedReplies;
+}) => {
+  const sanitizedFields = embed.fields
+    ? (
+        embed.fields as {
+          name: string;
+          value: string;
+          inline?: boolean;
+        }[]
+      ).flatMap((field) =>
+        field.value.length > 1024
+          ? splitString(field.value, 1024).map((value, i) => ({
+              name: `${field.name} p.${i + 1}`,
+              value,
+              inline: false,
+            }))
+          : [field]
+      )
+    : undefined;
+  const splits =
+    sanitizedFields?.reduce(
+      (acc, f): Exclude<typeof sanitizedFields, undefined>[] =>
+        sum(last(acc).map(({ inline }) => (inline ? 1 : 3))) > 9
+          ? [...acc, [f]]
+          : [...init(acc), [...last(acc), f]],
+      [[]] as Exclude<typeof sanitizedFields, undefined>[]
+    ) ?? [];
+  const embeds =
+    splits.length < 4
+      ? [embed]
+      : splits.map((fields) => ({
+          ...embed,
+          fields,
+        }));
+  if (embeds.length > 1)
+    await sendPaginatedEmbeds({
+      interaction,
+      embeds,
+    });
+  else await wrapped.editReply({ embeds: [embed] });
+};
 
 module.exports = {
   commands: [
@@ -142,52 +194,9 @@ module.exports = {
                     : embed
                 ),
                 TE.chain((embed) =>
-                  TE.fromTask(async () => {
-                    const sanitizedFields = embed.fields
-                      ? (
-                          embed.fields as {
-                            name: string;
-                            value: string;
-                            inline?: boolean;
-                          }[]
-                        ).flatMap((field) =>
-                          field.value.length > 1024
-                            ? splitString(field.value, 1024).map(
-                                (value, i) => ({
-                                  name: `${field.name} p.${i + 1}`,
-                                  value,
-                                  inline: false,
-                                })
-                              )
-                            : [field]
-                        )
-                      : undefined;
-                    const splits =
-                      sanitizedFields?.reduce(
-                        (
-                          acc,
-                          f
-                        ): Exclude<typeof sanitizedFields, undefined>[] =>
-                          sum(last(acc).map(({ inline }) => (inline ? 1 : 3))) >
-                          9
-                            ? [...acc, [f]]
-                            : [...init(acc), [...last(acc), f]],
-                        [[]] as Exclude<typeof sanitizedFields, undefined>[]
-                      ) ?? [];
-                    const embeds =
-                      splits.length < 4
-                        ? [embed]
-                        : splits.map((fields) => ({
-                            ...embed,
-                            fields,
-                          }));
-                    if (embeds.length > 1)
-                      await sendPaginatedEmbeds({
-                        interaction,
-                        embeds,
-                      });
-                    else await wrapped.editReply({ embeds: [embed] });
-                  })
+                  TE.fromTask(() =>
+                    sanitizeFields({ interaction, embed, wrapped })
+                  )
                 )
               )
           ),
@@ -252,8 +261,8 @@ module.exports = {
           required: false,
         },
       },
-      execute: wrappedCommand((args) => {
-        return pipe(
+      execute: wrappedCommand((args) =>
+        pipe(
           args,
           checkForGuildAndMember,
           TE.chainFirst(({ wrapped }) =>
@@ -307,8 +316,152 @@ ${sections.join("\n")}
           TE.getOrElse((s) => async () => {
             await args.wrapped.editReply(s);
           })
+        )
+      ),
+    }),
+    makeCommand({
+      name: "random_entry",
+      description:
+        "Look up a random entry from the channel- or server-defined codex.",
+      options: {
+        category: {
+          type: "string",
+          description:
+            "A codex category to select an entry from. Otherwise, the random entry could come from any category.",
+          required: false,
+          autoComplete: true,
+        },
+      },
+      execute: wrappedCommand((args) => {
+        return pipe(
+          args,
+          checkForGuildAndMember,
+          TE.chainFirst(({ wrapped }) =>
+            TE.fromTask(() => wrapped.deferReply())
+          ),
+          TE.bind("codexPrefix", getCodexPrefix),
+          TE.bindW("entryTableId", ({ codexPrefix }) =>
+            pipe(entry_list_view(codexPrefix), TE.of)
+          ),
+          TE.chainTaskK((a) =>
+            pipe(
+              T.of(a),
+              T.bind("category", ({ entryTableId, options: { category } }) =>
+                pipe(
+                  category === null
+                    ? T.of(O.none)
+                    : pipe(
+                        () =>
+                          Server.db.query(sql`
+                  select distinct category
+                  from ${entryTableId}`),
+                        T.map((ls) =>
+                          ls.some((l) => l.category === category)
+                            ? O.some(category)
+                            : O.none
+                        )
+                      )
+                )
+              )
+            )
+          ),
+          TE.bindW("lookupTableId", ({ codexPrefix }) =>
+            pipe(lookup_view(codexPrefix), TE.of)
+          ),
+          TE.chain(
+            ({ category, interaction, entryTableId, lookupTableId, wrapped }) =>
+              pipe(
+                category,
+                O.match(
+                  () => () =>
+                    Server.db.query(sql`
+              select embed
+              from (select *
+                    from ${entryTableId}
+                    tablesample bernoulli(1)
+                    order by random() limit 1) e
+              join ${lookupTableId} l
+                on e.id = l.id`),
+                  (cat) => () =>
+                    Server.db.query(sql`
+              select embed
+              from (select *
+                    from ${entryTableId}
+                    where category=${cat}
+                    order by random() limit 1) e
+              join ${lookupTableId} l
+                on e.id = l.id`)
+                ),
+                (id) => id,
+                T.map(
+                  E.fromPredicate(
+                    (data) => !!data.length,
+                    () => `Sorry, I couldn't any entries.`
+                  )
+                ),
+                TE.map(([{ embed }]) =>
+                  "extra_fields" in embed
+                    ? {
+                        ...embed.init,
+                        fields: (
+                          embed.extra_fields as Record<
+                            string,
+                            { name: string; value: string }
+                          >[]
+                        ).flatMap((o) => Object.values(o)),
+                      }
+                    : embed
+                ),
+                TE.chain((embed) =>
+                  TE.fromTask(async () =>
+                    sanitizeFields({ interaction, embed, wrapped })
+                  )
+                )
+              )
+          ),
+          TE.getOrElse((s) => async () => {
+            await args.wrapped.editReply(s);
+          })
         );
       }),
+      autoComplete: (interaction, { options }) =>
+        pipe(
+          { interaction },
+          checkForGuildAndMember,
+          TE.bind("codexPrefix", getCodexPrefix),
+          TE.bindW("tableId", ({ codexPrefix }) =>
+            pipe(entry_list_view(codexPrefix), TE.of)
+          ),
+          TE.mapLeft((): string[] => []),
+          TE.chainNullableK<string[]>([])((args) =>
+            options.category ? { ...args, entry: options.category } : undefined
+          ),
+          TE.chain(({ tableId, entry }) =>
+            TE.tryCatch(
+              (): Promise<{ id: string }[]> =>
+                Server.db.query(sql`
+                   select distinct category
+                   from ${tableId}
+                   where (category % ${entry} or split_part(category, ' (', 1) % ${entry})
+                   order by category <-> ${entry}
+                   limit 10`),
+              (): string[] => []
+            )
+          ),
+          T.map((res) =>
+            pipe(
+              res,
+              E.map((a) => a.map((e) => e.id)),
+              E.getOrElse(identity)
+            )
+          ),
+          T.chain(
+            (results) => () =>
+              interaction.respond(
+                results.map((value) => ({ name: value, value }))
+              )
+          )
+        )(),
     }),
   ],
 };
