@@ -440,18 +440,20 @@ ${sections.join("\n")}
             TE.tryCatch(
               (): Promise<{ id: string }[]> =>
                 Server.db.query(sql`
-                   select distinct category, category <-> ${entry} as score
-                   from ${tableId}
-                   where (category % ${entry})
-                   order by category <-> ${entry}
-                   limit 10`),
+                   select category, score
+		   from (select distinct category, category <-> ${entry} as score
+			 from ${tableId}
+			 where (category % ${entry})
+		        ) res
+	           order by score
+		   limit 10`),
               (): string[] => []
             )
           ),
           T.map((res) =>
             pipe(
               res,
-              E.map((a) => a.map((e) => e.id)),
+              E.map((a) => a.map((e) => e.category)),
               E.getOrElse(identity)
             )
           ),
