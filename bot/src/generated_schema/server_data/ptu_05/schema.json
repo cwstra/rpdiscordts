@@ -350,18 +350,60 @@
     ]
   },
   {
-    "name": "item",
+    "name": "item_data",
     "columns": [
       {
-        "name": "embed",
+        "name": "book",
         "isNullable": false,
         "hasDefault": false,
-        "typeId": 3802,
-        "typeName": "JSONB"
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "cost",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "description",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
       },
       {
         "name": "id",
         "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "modifier",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "page_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "slot",
+        "isNullable": true,
         "hasDefault": false,
         "typeId": 25,
         "typeName": "TEXT"
@@ -369,21 +411,56 @@
     ]
   },
   {
-    "name": "keyword",
+    "name": "keyword_data",
     "columns": [
       {
-        "name": "embed",
-        "isNullable": false,
-        "hasDefault": false,
-        "typeId": 3802,
-        "typeName": "JSONB"
-      },
-      {
-        "name": "id",
+        "name": "book",
         "isNullable": false,
         "hasDefault": false,
         "typeId": 25,
         "typeName": "TEXT"
+      },
+      {
+        "name": "description",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "id",
+        "isNullable": false,
+        "hasDefault": true,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "image",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "is_weather",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 16,
+        "typeName": "BOOL"
+      },
+      {
+        "name": "name",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "page_num",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 21,
+        "typeName": "SMALLINT"
       }
     ]
   },

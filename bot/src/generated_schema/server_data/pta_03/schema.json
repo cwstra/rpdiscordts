@@ -301,13 +301,6 @@
         "typeName": "TEXT[]"
       },
       {
-        "name": "evolutions",
-        "isNullable": false,
-        "hasDefault": false,
-        "typeId": 1009,
-        "typeName": "TEXT[]"
-      },
-      {
         "name": "habitats",
         "isNullable": false,
         "hasDefault": false,
@@ -412,6 +405,53 @@
       },
       {
         "name": "pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_evolution_stage",
+    "columns": [
+      {
+        "name": "base_pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "line_id",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "note",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "replace_form_with",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 25,
+        "typeName": "TEXT"
+      },
+      {
+        "name": "stage_number",
         "isNullable": false,
         "hasDefault": false,
         "typeId": 23,
@@ -647,6 +687,25 @@
         "hasDefault": false,
         "typeId": 1009,
         "typeName": "TEXT[]"
+      }
+    ]
+  },
+  {
+    "name": "pokemon_signature_moves",
+    "columns": [
+      {
+        "name": "move_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
+      },
+      {
+        "name": "pokemon_id",
+        "isNullable": false,
+        "hasDefault": false,
+        "typeId": 23,
+        "typeName": "INTEGER"
       }
     ]
   },
