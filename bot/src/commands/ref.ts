@@ -442,10 +442,13 @@ ${sections.join("\n")}
                 Server.db.query(sql`
                    select distinct category
                    from ${tableId}
-                   where (category % ${entry} or split_part(category, ' (', 1) % ${entry})
+                   where (category % ${entry})
                    order by category <-> ${entry}
                    limit 10`),
-              (): string[] => []
+              (e): string[] => {
+                console.log(e);
+                return [];
+              }
             )
           ),
           T.map((res) =>
