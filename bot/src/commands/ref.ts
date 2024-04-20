@@ -69,6 +69,7 @@ const getCodexPrefix = <
     )
   );
 
+
 const sanitizeFields = async ({
   interaction,
   embed,
@@ -438,7 +439,7 @@ ${sections.join("\n")}
           ),
           TE.chain(({ tableId, entry }) =>
             TE.tryCatch(
-              (): Promise<{ id: string }[]> =>
+              (): Promise<{ category: string }[]> =>
                 Server.db.query(sql`
                    select category, score
 		   from (select distinct category, category <-> ${entry} as score
