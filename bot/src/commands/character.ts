@@ -7,7 +7,7 @@ import { stringListing } from "../helpers/string";
 import { wrappedCommand } from "../interaction-wrapper";
 import { makeCommand } from "../make-command";
 import { sql, User } from "../sql-connections";
-import { identity, pipe, tuple } from "fp-ts/function";
+import { identity, pipe } from "fp-ts/function";
 import * as E from "fp-ts/Either";
 import * as T from "fp-ts/Task";
 import * as TE from "fp-ts/TaskEither";
@@ -16,6 +16,7 @@ import { partitionMap } from "fp-ts/lib/Array";
 import { sanitizeTask } from "../helpers/task";
 import { GuildMember, Permissions } from "discord.js";
 import { flattenedUnion } from "../helpers/types";
+import * as tsp from "typescript-parsec"
 
 const tripleBackTick = "```";
 
@@ -36,7 +37,7 @@ module.exports = makeCommand({
         attributes: {
           type: "string",
           description:
-            "Zero or more `--Name Value` pairs. If Name or Value contains spaces, quotation marks are necessary.",
+            "Zero or more `Name=Value` pairs. If Name or Value contains spaces, quotation marks are necessary.",
           required: false,
         },
       },
@@ -88,7 +89,7 @@ module.exports = makeCommand({
         attributes: {
           type: "string",
           description:
-            "A space separated list of `--Name Attribute` pairs or lone `--Name`s.",
+          "A space separated list of `Name=Attribute` pairs or lone `Name`s.",
           required: false,
         },
       },
@@ -432,51 +433,52 @@ function adminGuard(interaction: InteractionFromGuild) {
         )
   );
 }
-function parseGetAttrArgs(attributeString: string | null) {
-  if (!attributeString) return [];
-  // We can safely purge this character from the attributes at
-  // the start, and then use it as a marker for quoted groups
-  const nullChar = "\u0000";
-  const quoteRegex = /"((?:[^"\\]|\\.)*)"/;
-  const splitOnQuotes = attributeString.replace(nullChar, "").split(quoteRegex);
-  const quotedSections = splitOnQuotes.filter((_, i) => i % 2);
-  const dequotedString = splitOnQuotes
-    .map((s, i) => (i % 2 ? `${nullChar}${(i - 1) / 2}${nullChar}` : s))
-    .join("");
-  const lookup = (s: string) =>
-    s[0] === nullChar && s[0] === s.slice(-1)
-      ? quotedSections[parseInt(s.slice(1, -1))]
-      : s;
-  const entries = dequotedString.split(/\s+/);
-  return entries.map((e) => lookup(e));
-}
-function parseSetAttrArgs(attributeString: string | null) {
-  if (!attributeString) return {};
-  // We can safely purge this character from the attributes at
-  // the start, and then use it as a marker for quoted groups
-  const nullChar = "\u0000";
-  const quoteRegex = /"((?:[^"\\]|\\.)*)"/;
-  const splitOnQuotes = attributeString.replace(nullChar, "").split(quoteRegex);
-  const quotedSections = splitOnQuotes.filter((_, i) => i % 2);
-  const dequotedString = splitOnQuotes
-    .map((s, i) => (i % 2 ? `${nullChar}${(i - 1) / 2}${nullChar}` : s))
-    .join("");
-  const lookup = (s: string) =>
-    s[0] === nullChar && s[0] === s.slice(-1)
-      ? quotedSections[parseInt(s.slice(1, -1))]
-      : s;
-  const entries = dequotedString.split(/\s+/);
-  const { left: toDelete, right: toUpsert } = pipe(
-    entries,
-    partitionMap((e) => {
-      const eqInd = e.indexOf("=");
-      const [k, v] =
-        eqInd > -1 ? [e.slice(0, eqInd), e.slice(eqInd + 1)] : [e, null];
-      return v === null ? E.left(lookup(k)) : E.right(tuple(lookup(k), v));
-    })
+
+const [parseGetAttrArgs, parseSetAttrArgs] = (() => {
+  const lexer = tsp.buildLexer([
+    [true, /^=/g, "Equals" as const],
+    [true, /^[a-zA-Z0-9_-]+/g, "Unquoted" as const],
+    [true, /^"((?:[^"\\]|\\.)*)"/g, "Quoted" as const],
+    [false, /^\s+/g, "Space" as const],
+  ]);
+  type TokenKind = typeof lexer extends tsp.Lexer<infer K> ? K : never;
+
+  const VALUE = tsp.rule<TokenKind, string>();
+  const UPSERT = tsp.rule<TokenKind, [string, string]>();
+  const GET_ARGS = tsp.rule<TokenKind, string[]>();
+  const SET_ARGS = tsp.rule<TokenKind, ([string, string] | string)[]>();
+
+  VALUE.setPattern(
+    tsp.alt(
+      tsp.apply(tsp.tok("Unquoted" as const), v => v.text),
+      tsp.apply(tsp.tok("Quoted" as const), v => v.text.slice(1, -1)),
+    )
   );
-  return { toUpsert, toDelete };
-}
+
+  UPSERT.setPattern(
+    tsp.apply(tsp.seq(VALUE, tsp.str("="), VALUE), (([n, _, v]) => [n, v]))
+  );
+
+  GET_ARGS.setPattern(tsp.rep_sc(VALUE));
+
+  SET_ARGS.setPattern(tsp.rep_sc(tsp.alt(UPSERT, VALUE)));
+
+  return [
+    (arg: string | null): string[] => {
+      if (!arg) return []
+      return tsp.expectSingleResult(tsp.expectEOF(GET_ARGS.parse(lexer.parse(arg))))
+    },
+    (arg: string | null) => {
+      if (!arg) return {toUpsert: [], toDelete: []}
+      const {left: toUpsert, right: toDelete} =
+        pipe(
+          tsp.expectSingleResult(tsp.expectEOF(SET_ARGS.parse(lexer.parse(arg)))),
+          partitionMap(r => typeof r === 'string' ? E.right(r) : E.left(r))
+        )
+      return {toUpsert, toDelete}
+    },
+  ]
+})()
 
 export async function adminRoleCheck(
   member: GuildMember,
