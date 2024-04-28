@@ -423,6 +423,13 @@
         "typeName": "INTEGER"
       },
       {
+        "name": "hide_from_pre_evos",
+        "isNullable": true,
+        "hasDefault": false,
+        "typeId": 16,
+        "typeName": "BOOL"
+      },
+      {
         "name": "line_id",
         "isNullable": true,
         "hasDefault": false,
