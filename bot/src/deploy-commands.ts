@@ -4,7 +4,7 @@ import { CLIENT_ID, SERVER_ID, DISCORD_TOKEN } from "./env-vars";
 import * as yargs from "yargs";
 import { assert } from "./helpers/general";
 import { commandList } from "./command-info";
-import { Client, Intents } from "discord.js";
+import { Client, GatewayIntentBits } from "discord.js";
 
 (async () => {
   const {
@@ -59,7 +59,7 @@ import { Client, Intents } from "discord.js";
     name: string;
   }[];
 
-  const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+  const client = new Client({ intents: [ GatewayIntentBits.Guilds] });
   client.login(DISCORD_TOKEN);
   if (!client.application?.owner) await client.application?.fetch();
 
@@ -76,7 +76,7 @@ import { Client, Intents } from "discord.js";
       const id = commandNameIds.find(({ name }) => name === data.name)?.id;
       if (!id) return;
       const command = await commandManager.fetch(id);
-      await command.permissions.set({ permissions });
+      await command.permissions.set({ token: DISCORD_TOKEN, permissions });
     })
   );
 })();

@@ -1,4 +1,4 @@
-import { CommandInteraction } from "discord.js";
+import { ChannelType, CommandInteraction, PermissionsBitField } from "discord.js";
 import { FlattenedArrayUnion, FlattenedObjectUnion } from "./types";
 
 export function assert(condition: any, msg?: string): asserts condition {
@@ -32,26 +32,26 @@ export function trace<T>(t: T): T {
   return t;
 }
 
-export function isKeyOf<T>(t: T) {
+export function isKeyOf<T extends object>(t: T) {
   return (s: PropertyKey): s is keyof T => s in t;
 }
 
 export function checkChannelSendPerms(interaction: CommandInteraction) {
   switch (interaction.channel?.type) {
-    case "DM":
+    case ChannelType.DM:
       return true;
-    case "GUILD_TEXT":
-    case "GUILD_NEWS": {
-      if (!interaction.guild?.me) return false;
-      const perms = interaction.channel.permissionsFor(interaction.guild.me);
-      return perms.has("SEND_MESSAGES");
+    case ChannelType.GuildText:
+    case ChannelType.GuildAnnouncement: {
+      if (!interaction.guild?.members.me) return false;
+      const perms = interaction.channel.permissionsFor(interaction.guild.members.me);
+      return perms.has(PermissionsBitField.Flags.SendMessages);
     }
-    case "GUILD_PUBLIC_THREAD":
-    case "GUILD_NEWS_THREAD":
-    case "GUILD_PRIVATE_THREAD": {
-      if (!interaction.guild?.me) return false;
-      const perms = interaction.channel.permissionsFor(interaction.guild.me);
-      return perms.has("SEND_MESSAGES_IN_THREADS");
+    case ChannelType.PublicThread:
+    case ChannelType.AnnouncementThread:
+    case ChannelType.PrivateThread: {
+      if (!interaction.guild?.members.me) return false;
+      const perms = interaction.channel.permissionsFor(interaction.guild.members.me);
+      return perms.has(PermissionsBitField.Flags.SendMessagesInThreads);
     }
     case null:
     case undefined:

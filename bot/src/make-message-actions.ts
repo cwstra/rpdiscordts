@@ -7,12 +7,14 @@ import {
   Subtract,
 } from "@rimbu/typical/dist/types/strnum";
 import {
-  EmojiIdentifierResolvable,
-  MessageActionRow,
-  MessageButton,
-  MessageButtonStyleResolvable,
-  MessageSelectMenu,
-  MessageSelectOptionData,
+  APISelectMenuOption,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ComponentEmojiResolvable,
+  SelectMenuComponentOptionData,
+  StringSelectMenuBuilder,
+  StringSelectMenuOptionBuilder,
 } from "discord.js";
 
 type DigitToRange = {
@@ -72,17 +74,17 @@ type ButtonArg =
   | {
       customId: string;
       label: string;
-      style: Exclude<MessageButtonStyleResolvable, "LINK">;
+      style: Exclude<ButtonStyle, ButtonStyle.Link>;
       disabled?: boolean;
-      emoji?: EmojiIdentifierResolvable;
+      emoji?: ComponentEmojiResolvable;
     }
   | {
       customId: string;
       label: string;
-      style: "LINK";
+      style: ButtonStyle.Link;
       url: string;
       disabled?: boolean;
-      emoji?: EmojiIdentifierResolvable;
+      emoji?: ComponentEmojiResolvable;
     };
 type StringRange<SMin extends string, SMax extends string> = SRangeTuple<
   unknown,
@@ -109,7 +111,7 @@ type ValidRanges<MaxPossible extends number> = ValidRangesH<
 type SelectArg<Lengths> = Lengths extends number
   ? {
       customId: string;
-      options: BuildTuple<FromNumber<Lengths>, [MessageSelectOptionData]>;
+      options: BuildTuple<FromNumber<Lengths>, [APISelectMenuOption | StringSelectMenuOptionBuilder | SelectMenuComponentOptionData]>;
       placeholder?: string;
       disabled?: boolean;
       range?: ValidRanges<Lengths>;
@@ -119,23 +121,25 @@ type RowArg = RangeTuple<ButtonArg, 1, 5> | SelectArg<StringRange<"25", "25">>;
 
 export const makeMessageActions = (
   arg: RangeTuple<RowArg, 1, 5>
-): MessageActionRow[] =>
+): (ActionRowBuilder<StringSelectMenuBuilder>| ActionRowBuilder<ButtonBuilder>)[] =>
   arg.map((a) =>
-    new MessageActionRow().addComponents(
-      ...(Array.isArray(a)
-        ? a.map((b) => {
-            const button = new MessageButton()
+Array.isArray(a) ?
+    new ActionRowBuilder<ButtonBuilder>().addComponents(
+      ...(a.map((b) => {
+            const button = new ButtonBuilder()
               .setCustomId(b.customId)
               .setLabel(b.label)
               .setStyle(b.style);
             if (b.disabled !== undefined) button.setDisabled(b.disabled);
             if (b.emoji !== undefined) button.setEmoji(b.emoji);
-            if (b.style === "LINK") button.setURL(b.url);
+            if (b.style === ButtonStyle.Link) button.setURL(b.url);
             return button;
-          })
-        : [
+          }))
+    ) :
+    new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+      ...([
             (() => {
-              const select = new MessageSelectMenu()
+              const select = new StringSelectMenuBuilder()
                 .setCustomId(a.customId)
                 .setOptions(a.options);
               if (a.placeholder !== undefined)

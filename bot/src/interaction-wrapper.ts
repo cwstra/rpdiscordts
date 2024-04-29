@@ -1,5 +1,6 @@
 import * as T from "fp-ts/Task";
 import {
+  ChatInputCommandInteraction,
   CommandInteraction,
   InteractionDeferReplyOptions,
   MessagePayload,
@@ -73,12 +74,12 @@ export const wrappedExecute =
 export const wrappedCommand =
   <Options>(
     task: (args: {
-      interaction: CommandInteraction;
+      interaction: ChatInputCommandInteraction;
       options: Options;
       wrapped: WrappedReplies;
     }) => T.Task<void>
   ) =>
-  async (interaction: CommandInteraction, options: Options): Promise<void> => {
+  async (interaction: ChatInputCommandInteraction, options: Options): Promise<void> => {
     const wrapped = await interactionWrapper(interaction);
     await task({ interaction, options, wrapped })();
   };

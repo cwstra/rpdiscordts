@@ -1,9 +1,9 @@
 import {
   AutocompleteInteraction,
+  ChatInputCommandInteraction,
   Client,
   Collection,
-  CommandInteraction,
-  Intents,
+  GatewayIntentBits,
 } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { DISCORD_TOKEN } from "./env-vars";
@@ -23,20 +23,20 @@ export class ExtendedClient extends Client {
     string,
     {
       data: SlashCommandBuilder;
-      execute: (interaction: CommandInteraction) => Promise<void>;
+      execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
       autoComplete?: (interaction: AutocompleteInteraction) => Promise<void>;
     }
   >;
 }
 
-const client = new ExtendedClient({ intents: [Intents.FLAGS.GUILDS] });
+const client = new ExtendedClient({ intents: [GatewayIntentBits.Guilds] });
 
 client.once("ready", () => {
   console.log("Ready!");
 });
 
 client.on("interactionCreate", async (interaction) => {
-  if (interaction.isCommand()) {
+  if (interaction.isChatInputCommand()) {
     const command = client.commands.get(interaction.commandName);
 
     if (!command) return;

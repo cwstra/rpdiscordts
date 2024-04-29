@@ -1,7 +1,8 @@
 import {
-  CommandInteraction,
-  MessageSelectOptionData,
-  Permissions,
+  ButtonStyle,
+  ChatInputCommandInteraction,
+  ComponentType,
+  PermissionsBitField,
 } from "discord.js";
 import { makeCommand } from "../make-command";
 import { fetchSharedEntry, User } from "../sql-connections";
@@ -31,9 +32,9 @@ const targetOption = {
   description: `The target of the settings modification.`,
   required: true as const,
   choices: [
-    ["Channel", "channel"],
-    ["Server", "server"],
-  ] as [name: string, value: "channel" | "server"][],
+    {name: "Channel", value: "channel"},
+    {name: "Server", value: "server"},
+  ] as {name: string, value: "channel" | "server"}[],
 };
 
 module.exports = makeCommand({
@@ -291,7 +292,7 @@ module.exports = makeCommand({
                             // TODO: If we get more than 25 codexes, remove the assertion
                             //       and paginate somehow.
                             options: codexList.map(
-                              (c): MessageSelectOptionData => ({
+                              (c) => ({
                                 label: c.display_name,
                                 value: `${c.id}`,
                               })
@@ -301,7 +302,7 @@ module.exports = makeCommand({
                             {
                               customId: "cancel",
                               label: "Cancel",
-                              style: "PRIMARY",
+                              style: ButtonStyle.Primary,
                             },
                           ],
                         ]),
@@ -331,9 +332,9 @@ module.exports = makeCommand({
                         time: 15000,
                       }),
                     T.chain((response) => {
-                      if (response.componentType === "BUTTON")
+                      if (response.componentType === ComponentType.Button)
                         return T.of("Codex change cancelled!");
-                      assert(response.isSelectMenu());
+                      assert(response.isStringSelectMenu());
                       try {
                         return pipe(
                           T.of(parseInt(response.values[0])),
@@ -502,7 +503,7 @@ module.exports = makeCommand({
           }
         }
       ),
-      TE.getOrElse((e) => () => args.wrapped.reply(e))
+      TE.getOrElseW((e) => async () => {await args.wrapped.reply(e)})
     )
   ),
 });
@@ -520,7 +521,7 @@ const checkForAdminRole = <Scope extends { interaction: InteractionFromGuild }>(
     } = scope;
     const isAdmin =
       member.id === ownerId ||
-      member.permissions.has(Permissions.FLAGS.ADMINISTRATOR);
+      member.permissions.has(PermissionsBitField.Flags.Administrator);
     return pipe(
       isAdmin && !isForRoleChange
         ? TO.some({ ...scope, modRoles: [] })
@@ -599,7 +600,7 @@ type BaseYesNoDialogArgs = {
 };
 
 function doBaseYesNoDialog(
-  interaction: CommandInteraction,
+  interaction: ChatInputCommandInteraction,
   wrapped: WrappedReplies,
   { query, success, cancel, error, action }: BaseYesNoDialogArgs
 ) {
@@ -610,8 +611,8 @@ function doBaseYesNoDialog(
         fetchReply: true,
         components: makeMessageActions([
           [
-            { customId: "yes", label: "Yes", style: "PRIMARY" },
-            { customId: "no", label: "No", style: "PRIMARY" },
+            { customId: "yes", label: "Yes", style: ButtonStyle.Primary },
+            { customId: "no", label: "No", style: ButtonStyle.Primary },
           ],
         ]),
       }),
@@ -630,7 +631,7 @@ function doBaseYesNoDialog(
                 await i.deferUpdate();
                 return i.user.id === interaction.user.id;
               },
-              componentType: "BUTTON",
+              componentType: ComponentType.Button,
               time: 15000,
             }),
           () => "Response timed out."
@@ -656,7 +657,7 @@ function doBaseYesNoDialog(
 }
 
 const doSymbolListDialog = (
-  interaction: CommandInteraction,
+  interaction: ChatInputCommandInteraction,
   wrapped: WrappedReplies,
   {
     action,
@@ -739,7 +740,8 @@ const doSymbolListDialog = (
         })
       );
     }),
-    TE.getOrElse((e) => () => wrapped.reply(e)),
+    a => a,
+    TE.getOrElseW((e) => () => wrapped.reply(e)),
     T.map(() => {})
   );
 };

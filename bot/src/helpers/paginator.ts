@@ -1,12 +1,11 @@
 import {
+  APIEmbed,
+  ButtonStyle,
   CommandInteraction,
-  Interaction,
-  InteractionButtonOptions,
+  ComponentType,
   InteractionReplyOptions,
   Message,
-  MessageEmbedOptions,
 } from "discord.js";
-import { WrappedReplies } from "../interaction-wrapper";
 import { wrapMessageComponentCollector } from "./observable";
 import * as rx from "rxjs";
 
@@ -14,7 +13,7 @@ export interface PageButtonOptions {
   /**
    * The style of the button.
    */
-  style?: InteractionButtonOptions["style"];
+  style?: ButtonStyle.Primary | ButtonStyle.Secondary | ButtonStyle.Success | ButtonStyle.Danger;
 
   /**
    * The text to be displayed on the last button (Defaults to 'Last').
@@ -64,10 +63,9 @@ export interface PageButtonOptions {
 
 type PaginationProps = {
   interaction: CommandInteraction;
-  embeds: MessageEmbedOptions[];
+  embeds: APIEmbed[];
   options?: PageButtonOptions;
 };
-
 /**
  * Sends a paginated message from the given embeds.
  * @param interaction The interaction to reply to.
@@ -77,7 +75,7 @@ export async function sendPaginatedEmbeds({
   interaction,
   embeds,
   options: {
-    style = "PRIMARY",
+    style = ButtonStyle.Primary,
     firstLabel = "First",
     previousLabel = "Previous",
     stopLabel = "Stop",
@@ -93,7 +91,7 @@ export async function sendPaginatedEmbeds({
   let currentPage = 0;
 
   // Precheck
-  if (interaction instanceof Interaction && interaction.replied)
+  if (interaction.replied)
     throw new Error("Cannot paginate when interaction is already replied to.");
 
   const generateOptionsForPage = (page: number): InteractionReplyOptions => {
@@ -120,37 +118,37 @@ export async function sendPaginatedEmbeds({
       ],
       components: [
         {
-          type: "ACTION_ROW",
+          type: ComponentType.ActionRow,
           components: [
             {
-              type: "BUTTON",
+              type: ComponentType.Button,
               customId: "firstButton",
               label: firstLabel,
               style,
               disabled: page === 0,
             },
             {
-              type: "BUTTON",
+              type: ComponentType.Button,
               customId: "previousButton",
               label: previousLabel,
               style,
               disabled: page === 0,
             },
             {
-              type: "BUTTON",
+              type: ComponentType.Button,
               customId: "stopButton",
               label: stopLabel,
               style,
             },
             {
-              type: "BUTTON",
+              type: ComponentType.Button,
               customId: "nextButton",
               label: nextLabel,
               style,
               disabled: page === embeds.length - 1,
             },
             {
-              type: "BUTTON",
+              type: ComponentType.Button,
               customId: "lastButton",
               label: lastLabel,
               style,
@@ -187,7 +185,7 @@ export async function sendPaginatedEmbeds({
 
   wrapMessageComponentCollector(
     message.createMessageComponentCollector({
-      componentType: "BUTTON",
+      componentType: ComponentType.Button,
       time,
     })
   )

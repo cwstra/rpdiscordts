@@ -14,7 +14,7 @@ import * as TE from "fp-ts/TaskEither";
 import Characters from "../generated_schema/user_data/characters";
 import { partitionMap } from "fp-ts/lib/Array";
 import { sanitizeTask } from "../helpers/task";
-import { GuildMember, Permissions } from "discord.js";
+import { GuildMember, PermissionFlagsBits } from "discord.js";
 import { flattenedUnion } from "../helpers/types";
 import * as tsp from "typescript-parsec"
 
@@ -339,7 +339,7 @@ module.exports = makeCommand({
           }
         }
       }),
-      TE.getOrElse((message) => () => args.wrapped.reply(message))
+      TE.getOrElse((message) => async () => {await args.wrapped.reply(message)})
     );
   }),
   autoComplete: (args, opts) => {
@@ -487,7 +487,7 @@ export async function adminRoleCheck(
 ): Promise<{ isAdminRole: boolean; modRoles: string[] }> {
   const isAdmin =
     member.id === ownerId &&
-    member.permissions.has(Permissions.FLAGS.ADMINISTRATOR);
+    member.permissions.has(PermissionFlagsBits.Administrator);
   if (isAdmin && !isForRoleChange) return { isAdminRole: true, modRoles: [] };
   const modRoles = (
     await User.tables

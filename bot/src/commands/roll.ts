@@ -15,6 +15,7 @@ import { Falsey } from "../helpers/types";
 import { ROLL_PATH, ROLL_PORT, ROLL_URL } from "../env-vars";
 import { randomInt } from "fp-ts/lib/Random";
 import * as http from "http";
+import { AttachmentBuilder } from "discord.js";
 
 type JSONResult =
   | {
@@ -139,8 +140,18 @@ module.exports = makeCommand({
       ),
       //TODO: Add roll statistics back in
       T.chain(({ wrapped, expression, result }) => async () => {
-        wrapped.editReply(formatResult(expression, result));
-      })
+        const formatted = formatResult(expression, result);
+        if (formatted.length <= 2000)
+          return await wrapped.editReply(formatted)
+        const attachment = new AttachmentBuilder(Buffer.from(formatted, 'utf-8'))
+        //formatted.length
+        await wrapped.editReply({
+          message: `Result too long to display; see attached file for details.
+${A.last(formatted.split("\n"))}`,
+          files: [attachment]
+        });
+      }),
+      T.chain(() => async () => {})
     );
   }),
 });

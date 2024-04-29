@@ -1,7 +1,7 @@
-import { Interaction, InteractionCollector, Message } from "discord.js";
+import { CollectedInteraction, InteractionCollector } from "discord.js";
 import { Observable } from "rxjs";
 
-export function wrapMessageComponentCollector<T extends Interaction>(
+export function wrapMessageComponentCollector<T extends CollectedInteraction>(
   collector: InteractionCollector<T>
 ) {
   return new Observable<T>((subscriber) => {

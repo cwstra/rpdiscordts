@@ -1,9 +1,10 @@
 import {
-  ApplicationCommandOptionChoice,
-  ApplicationCommandPermissionData,
+  ApplicationCommandPermissions,
+  AutocompleteFocusedOption,
   AutocompleteInteraction,
   Channel,
-  CommandInteraction,
+  ChatInputCommandInteraction,
+  InteractionType,
   Role,
   User,
 } from "discord.js";
@@ -15,17 +16,17 @@ namespace Option {
   type Base = { description: string; required: boolean };
   export type String = Base & {
     type: "string";
-    choices?: [name: string, value: string][];
+    choices?: {name: string, value: string}[];
     autoComplete?: boolean;
   };
   export type Integer = Base & {
     type: "integer";
-    choices?: [name: string, value: number][];
+    choices?: {name: string, value: number}[];
     autoComplete?: boolean;
   };
   export type Number = Base & {
     type: "number";
-    choices?: [name: string, value: number][];
+    choices?: {name: string, value: number}[];
     autoComplete?: boolean;
   };
   export type Boolean = Base & {
@@ -68,15 +69,15 @@ type OptionResultMap<M extends OptionMap> = {
     ? O extends Option
       ?
           | (O extends Option.String
-              ? O extends { choices: [string, infer Value][] }
+              ? O extends { choices: {name: string, value: infer Value}[] }
                 ? Value
                 : string
               : O extends Option.Integer
-              ? O extends { choices: [string, infer Value][] }
+              ? O extends { choices: {name: string, value: infer Value}[] }
                 ? Value
                 : number
               : O extends Option.Number
-              ? O extends { choices: [string, infer Value][] }
+              ? O extends { choices: {name: string, value: infer Value}[] }
                 ? Value
                 : number
               : O extends Option.Boolean
@@ -89,7 +90,7 @@ type OptionResultMap<M extends OptionMap> = {
               ? Role
               : O extends Option.Mentionable
               ? NonNullable<
-                  ReturnType<CommandInteraction["options"]["getMentionable"]>
+                  ReturnType<ChatInputCommandInteraction["options"]["getMentionable"]>
                 >
               : never)
           | (O["required"] extends true ? never : null)
@@ -138,7 +139,7 @@ type AutoOptionResultMap<M extends OptionMap> = {
                       : O extends Option.Mentionable
                       ? NonNullable<
                           ReturnType<
-                            CommandInteraction["options"]["getMentionable"]
+                            ChatInputCommandInteraction["options"]["getMentionable"]
                           >
                         >
                       : never)
@@ -151,9 +152,9 @@ type AutoOptionResultMap<M extends OptionMap> = {
   : never;
 
 const optionMapToResultMap = (
-  i: CommandInteraction | AutocompleteInteraction,
+  i: ChatInputCommandInteraction | AutocompleteInteraction,
   options: OptionMap,
-  forAuto?: ApplicationCommandOptionChoice
+  forAuto?: AutocompleteFocusedOption
 ) =>
   Object.fromEntries(
     Object.entries(options).map(([name, value]) => [
@@ -170,6 +171,12 @@ const optionMapToResultMap = (
             return i.options.getNumber(name, req);
           case "boolean":
             return i.options.getBoolean(name, req);
+        }
+        // Think we just assume this doesn't happen;
+        // autocomplete presumably happens on discord's side
+        if (i.type === InteractionType.ApplicationCommandAutocomplete)
+          return
+        switch (value.type) {
           case "user":
             return i.options.getUser(name, req);
           case "channel":
@@ -255,9 +262,8 @@ type SubAutoCommandGroupResult<
 type BaseCommand<Opts, AutoOpts = never> = {
   name: string;
   description: string;
-  defaultPermission?: boolean;
-  permissions?: ApplicationCommandPermissionData[];
-  execute: (interaction: CommandInteraction, options: Opts) => Promise<void>;
+  permissions?: ApplicationCommandPermissions[];
+  execute: (interaction: ChatInputCommandInteraction, options: Opts) => Promise<void>;
   autoComplete?: (
     interaction: AutocompleteInteraction,
     options: AutoOpts
@@ -312,7 +318,7 @@ function addOption(
       builder.addStringOption((o) => {
         o.setName(name).setDescription(option.description);
         if (option.required) o.setRequired(true);
-        if (option.choices) o.addChoices(option.choices);
+        if (option.choices) o.addChoices(...option.choices);
         if (option.autoComplete) o.setAutocomplete(true);
         return o;
       });
@@ -321,7 +327,7 @@ function addOption(
       builder.addIntegerOption((o) => {
         o.setName(name).setDescription(option.description);
         if (option.required) o.setRequired(true);
-        if (option.choices) o.addChoices(option.choices);
+        if (option.choices) o.addChoices(...option.choices);
         if (option.autoComplete) o.setAutocomplete(true);
         return o;
       });
@@ -330,7 +336,7 @@ function addOption(
       builder.addNumberOption((o) => {
         o.setName(name).setDescription(option.description);
         if (option.required) o.setRequired(true);
-        if (option.choices) o.addChoices(option.choices);
+        if (option.choices) o.addChoices(...option.choices);
         if (option.autoComplete) o.setAutocomplete(true);
         return o;
       });
@@ -413,8 +419,8 @@ function addSubCommandGroup(
 
 export type CommandDef = {
   data: SlashCommandBuilder;
-  permissions?: ApplicationCommandPermissionData[];
-  execute: (interaction: CommandInteraction) => Promise<void>;
+  permissions?: ApplicationCommandPermissions[];
+  execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
   autoComplete?: (interaction: AutocompleteInteraction) => Promise<void>;
 };
 
@@ -441,8 +447,6 @@ export function makeCommand(
   const builder = new SlashCommandBuilder()
     .setName(args.name)
     .setDescription(args.description);
-  if (args.defaultPermission !== undefined)
-    builder.setDefaultPermission(args.defaultPermission);
   if ("subcommandGroups" in args) {
     Object.entries(args.subcommandGroups).forEach(([n, groupData]) =>
       addSubCommandGroup(builder, n, groupData)
@@ -453,8 +457,9 @@ export function makeCommand(
       );
 
       const parseOptions = (
-        i: CommandInteraction | AutocompleteInteraction
+        i: ChatInputCommandInteraction | AutocompleteInteraction
       ) => {
+
         const subCommand = i.options.getSubcommand();
         const group =
           subCommand in args.subcommands
@@ -480,7 +485,7 @@ export function makeCommand(
       return {
         data: builder,
         permissions: args.permissions,
-        execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
+        execute: (i: ChatInputCommandInteraction) => args.execute(i, parseOptions(i)),
         autoComplete:
           args.autoComplete &&
           (async (i: AutocompleteInteraction) =>
@@ -488,12 +493,12 @@ export function makeCommand(
       };
     } else {
       const parseOptions = (
-        i: CommandInteraction | AutocompleteInteraction
+        i: ChatInputCommandInteraction | AutocompleteInteraction
       ) => {
         const group = i.options.getSubcommandGroup() ?? undefined;
         const subCommand = i.options.getSubcommand();
         const { options } = flattenedUnion(
-          args.subcommandGroups[group].subCommands[subCommand]
+          args.subcommandGroups[group!].subCommands[subCommand]
         );
         const focused = i.isAutocomplete()
           ? i.options.getFocused(true)
@@ -510,7 +515,7 @@ export function makeCommand(
       return {
         data: builder,
         permissions: args.permissions,
-        execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
+        execute: (i: ChatInputCommandInteraction) => args.execute(i, parseOptions(i)),
         autoComplete:
           args.autoComplete &&
           (async (i: AutocompleteInteraction) =>
@@ -521,7 +526,7 @@ export function makeCommand(
     Object.entries(args.subcommands ?? {}).forEach(([n, subCommandData]) =>
       addSubCommand(builder, n, subCommandData)
     );
-    const parseOptions = (i: CommandInteraction | AutocompleteInteraction) => {
+    const parseOptions = (i: ChatInputCommandInteraction | AutocompleteInteraction) => {
       const subCommandName = i.options.getSubcommand();
       const subCommand =
         args.subcommands[subCommandName as keyof typeof args.subcommands];
@@ -540,7 +545,7 @@ export function makeCommand(
     return {
       data: builder,
       permissions: args.permissions,
-      execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
+      execute: (i: ChatInputCommandInteraction) => args.execute(i, parseOptions(i)),
       autoComplete:
         args.autoComplete &&
         (async (i: AutocompleteInteraction) =>
@@ -551,7 +556,7 @@ export function makeCommand(
       addOption(builder, n, o)
     );
     const parseOptions = args.options
-      ? (i: CommandInteraction | AutocompleteInteraction) => {
+      ? (i: ChatInputCommandInteraction | AutocompleteInteraction) => {
           const focused = i.isAutocomplete()
             ? i.options.getFocused(true)
             : undefined;
@@ -565,8 +570,7 @@ export function makeCommand(
       : () => ({});
     return {
       data: builder,
-      permissions: args.permissions,
-      execute: (i: CommandInteraction) => args.execute(i, parseOptions(i)),
+      execute: (i: ChatInputCommandInteraction) => args.execute(i, parseOptions(i)),
       autoComplete:
         args.autoComplete &&
         (async (i: AutocompleteInteraction) =>
