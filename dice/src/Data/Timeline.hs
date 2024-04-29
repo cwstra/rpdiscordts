@@ -75,7 +75,7 @@ resolveJoin = foldr1 step
     step
       Timeline {history = bHist, historyLength = bLen}
       Timeline {history = Instant {unresolved = unA} :| aHist, historyLength = aLen} =
-        Timeline {history = lastB :| initB ++ aHist, historyLength = bLen + aLen}
+        Timeline {history = lastB :| initB ++ aHist, historyLength = bLen + aLen - 1}
         where
           inst :| restB = NE.reverse bHist
           lastB :| initB = NE.reverse $ inst {unresolved = unA} :| restB
@@ -97,7 +97,7 @@ zip
     | Instant _ res :| _ <- bHist =
       Timeline
         { history = NE.zipWith liftedFn aHist (pad difference res bHist),
-          historyLength = bLen
+          historyLength = aLen
         }
     where
       difference = aLen - bLen

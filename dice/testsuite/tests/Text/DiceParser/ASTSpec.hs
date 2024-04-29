@@ -40,10 +40,10 @@ staticGen :: StdGen
 staticGen = mkStdGen 1
 
 staticResolve :: ASTNode -> (Either Text Resolved, ([(Text, Text)], StdGen))
-staticResolve = runHistory staticGen . resolve
+staticResolve = runHistory Nothing staticGen . resolve
 
 staticSimplify :: ASTNode -> (Either Text Simplified, ([(Text, Text)], StdGen))
-staticSimplify = runHistory staticGen . simplify
+staticSimplify = runHistory Nothing staticGen . simplify
 
 n = NumberNode
 

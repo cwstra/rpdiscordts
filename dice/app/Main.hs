@@ -17,7 +17,9 @@ liftEither :: Exception s => Either s b -> IO b
 liftEither (Right b) = return b
 liftEither (Left e) = throw e
 
-data JSONResult = JSONFailure {errorMessage :: Text, input :: Text} | JSONSuccess {input :: Text, history :: [(Text, Text)], result :: Resolved}
+data JSONResult
+  = JSONFailure {errorMessage :: Text, input :: Text}
+  | JSONSuccess {input :: Text, history :: [(Text, Text)], result :: Resolved}
 
 instance ToJSON JSONResult where
   toJSON JSONFailure {errorMessage, input} = object ["status" .= ("Failure" :: Text), "errorMessage" .= errorMessage, "input" .= input]
@@ -37,12 +39,13 @@ main = Scotty.scotty 4935 $
   Scotty.get "/roll" $ do
     input <- Scotty.param "roll"
     seed <- Scotty.param "seed"
+    maxDice <- Scotty.rescue (fmap Just $ Scotty.param "maxDice") (const $ return Nothing)
     jsonResult <- Scotty.liftAndCatchIO $
       timeout 10000000 $
         return $
           toResult input $ do
             ast <- runExprParser input
-            let (resolved, (history, _)) = runHistory (mkStdGen seed) $ resolve ast
+            let (resolved, (history, _)) = runHistory maxDice (mkStdGen seed) $ resolve ast
             result <- resolved
             return (result, history)
     maybe (Scotty.text "Computation timeout") Scotty.json jsonResult

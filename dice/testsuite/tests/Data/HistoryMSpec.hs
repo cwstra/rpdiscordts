@@ -12,7 +12,7 @@ import Test.QuickCheck
 -- Not testing randomness at present, so this
 -- helper can just use a static gen
 getLines :: HistoryM StdGen a -> [(Text, Text)]
-getLines = fst . snd . runHistory (mkStdGen 1)
+getLines = fst . snd . runHistory Nothing (mkStdGen 1)
 
 spec :: Spec
 spec = do

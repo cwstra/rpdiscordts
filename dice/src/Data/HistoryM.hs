@@ -38,13 +38,21 @@ mapToEntries :: ([Timeline] -> [Timeline]) -> HistoryZip -> HistoryZip
 mapToEntries fn (Zip zFn tls) = Zip zFn $ fn tls
 mapToEntries fn (Join tls) = Join $ fn tls
 
-type HistoryM g = ExceptT Text (State ([HistoryZip], g))
+data HistoryContext g
+  = HistoryContext {
+      currentHistory :: [HistoryZip],
+      randomGen :: g,
+      maxDiceToDisplay :: Maybe Int
+    }
+type HistoryM g = ExceptT Text (State (HistoryContext g))
 
 --getForwardHistory
-runHistory :: g -> HistoryM g a -> (Either Text a, ([(Text, Text)], g))
-runHistory g m = (res, (collapse zips, g'))
+runHistory :: Maybe Int -> g -> HistoryM g a -> (Either Text a, ([(Text, Text)], g))
+runHistory maxDiceToDisplay g m = (res, (collapse zips, g'))
   where
-    (res, (zips, g')) = runState (runExceptT m) ([], g)
+    (res, ctx) = runState (runExceptT m) (HistoryContext {currentHistory = [], randomGen = g, maxDiceToDisplay = maxDiceToDisplay })
+    zips = currentHistory ctx
+    g' = randomGen ctx
     collapse [] = []
     collapse (Zip _ [] : zs) = collapse zs
     collapse (Join [] : zs) = collapse zs
@@ -56,7 +64,7 @@ runHistory g m = (res, (collapse zips, g'))
     collapse (Join (tl1 : tl1s) : Join tl2s : zs) = collapse $ Join (TL.resolveJoin (tl1 :| tl1s) : tl2s) : zs
 
 modifyHistory :: ([HistoryZip] -> [HistoryZip]) -> HistoryM g ()
-modifyHistory = modify . first
+modifyHistory fn = modify (\ctx -> ctx{currentHistory = fn (currentHistory ctx)})
 
 mapHead :: (a -> a) -> [a] -> [a]
 mapHead _ [] = []
@@ -139,11 +147,18 @@ withZipReplace display fn ha = do
 
 simpleRoll :: RandomGen g => Simplified.Dice -> HistoryM g (Text, GeneralNumber)
 simpleRoll d = do
-  g <- gets snd
+  ctx <- get
+  let g = randomGen ctx
   let (terms, res, g') = Simplified.rollWrappedDice d g
-  let termText = T.concat ["(", T.intercalate " + " $ map (showKeptOrDropped show) terms, ")"]
-  modify $ second $ const g'
+  let termText = T.concat ["(", condShow terms (length terms) (maxDiceToDisplay ctx), ")"]
+  put $ ctx{randomGen = g'}
   return (termText, res)
+  where
+    joinText = T.intercalate " + " . map (showKeptOrDropped show)
+    condShow terms len maxDice
+      | Just m <- maxDice, len > m =
+        T.concat [joinText (take 2 terms), " + ...", show (len - 4), " other terms... + ", joinText (drop (len - 2) terms)]
+      | otherwise = joinText terms
 
 injectRollResult :: (Show a, RandomGen g) => (a -> Text) -> (Text, a) -> HistoryM g a
 injectRollResult resShow (termText, res) = do

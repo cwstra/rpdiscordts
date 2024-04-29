@@ -20,5 +20,5 @@ mkDerivation {
   ];
   testToolDepends = [ hspec-discover ];
   license = "unknown";
-  hydraPlatforms = lib.platforms.none;
+  mainProgram = "rpdiscorddice";
 }
