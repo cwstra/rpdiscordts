@@ -153,7 +153,7 @@ async function fetch(expression: string, seed: number): Promise<JSONResult> {
     path: `${ROLL_PATH}?roll=${encodeURIComponent(expression).replace(
       "'",
       "%27"
-    )}&seed=${seed}`,
+    )}&seed=${seed}&maxDice=20`,
   };
   return new Promise((resolve, reject) =>
     http
