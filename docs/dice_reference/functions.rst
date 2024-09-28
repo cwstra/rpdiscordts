@@ -475,7 +475,7 @@ Operator Type: Infix 3
 
 .. _division:
 
-Divison ( ``/``)
+Division ( ``/``)
 --------------------------------------------
 
 The ``/`` function performs divison on numbers.
