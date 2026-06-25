@@ -37,10 +37,10 @@ toResult input (Right (result, history)) = JSONSuccess {input, history, result}
 main :: IO ()
 main = Scotty.scotty 4935 $
   Scotty.get "/roll" $ do
-    input <- Scotty.param "roll"
-    seed <- Scotty.param "seed"
-    maxDice <- Scotty.rescue (fmap Just $ Scotty.param "maxDice") (const $ return Nothing)
-    jsonResult <- Scotty.liftAndCatchIO $
+    input <- Scotty.queryParam "roll"
+    seed <- Scotty.queryParam "seed"
+    maxDice <- Scotty.queryParamMaybe "maxDice"
+    jsonResult <- Scotty.liftIO $
       timeout 10000000 $
         return $
           toResult input $ do
