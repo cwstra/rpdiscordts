@@ -1,13 +1,16 @@
-import { Collection } from "discord.js";
+import { Collection, OAuth2Scopes } from "discord.js";
 import {
-  BOT_DISCORD_SERVER,
+  BOT_DISCORD_SERVER_ID,
+  BOT_DISCORD_SERVER_GENERAL_CHANNEL,
   BOT_DOC_URL,
   BOT_GIT_URL,
   DONATION_TEXT,
 } from "../env-vars";
 import { compact } from "../helpers/array";
+import { maybePipe, onlyIfAllExist } from "../helpers/general";
 import { wrappedExecute } from "../interaction-wrapper";
 import { makeCommand } from "../make-command";
+import {differenceInHours} from 'date-fns/differenceInHours'
 
 const phrases = ["Hey!", "Listen!", "Watch out!"];
 
@@ -15,14 +18,22 @@ const serverFairies = new Collection<string, number>();
 
 module.exports = {
   commands: compact([
-    BOT_DISCORD_SERVER &&
-      makeCommand({
+    maybePipe(onlyIfAllExist({BOT_DISCORD_SERVER_ID, BOT_DISCORD_SERVER_GENERAL_CHANNEL}), 
+      ({BOT_DISCORD_SERVER_ID, BOT_DISCORD_SERVER_GENERAL_CHANNEL}) => makeCommand({
         name: "server_link",
         description: "Sends the link to the bot discord server.",
-        execute: wrappedExecute(async ({ wrapped }) => {
-          await wrapped.reply(BOT_DISCORD_SERVER!);
+        execute: wrappedExecute(async ({ interaction,wrapped }) => {
+          const guild = await interaction.client.guilds.fetch(BOT_DISCORD_SERVER_ID)
+          const recentExistingInvite = (await guild.invites.fetch({channelId: BOT_DISCORD_SERVER_GENERAL_CHANNEL}))
+             .find(i => i.expiresAt && differenceInHours(i.expiresAt, new Date()) > 18);
+          if (recentExistingInvite) {
+            await wrapped.reply(recentExistingInvite.url); 
+            return;
+          }
+          const newInvite = await guild.invites.create(BOT_DISCORD_SERVER_GENERAL_CHANNEL)
+          await wrapped.reply(newInvite.url);
         }),
-      }),
+      })),
     BOT_DOC_URL &&
       makeCommand({
         name: "docs",
@@ -74,8 +85,13 @@ module.exports = {
       description: "Sends a link to invite the bot to other servers.",
       execute: wrappedExecute(async ({ interaction, wrapped }) => {
         await wrapped.reply(
-          `https://discord.com/api/oauth2/authorize?client_id=${interaction.applicationId}&permissions=0&scope=bot%20applications.commands`
+          interaction.client.generateInvite({
+            scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
+          })
         );
+        //await wrapped.reply(
+        //  `https://discord.com/api/oauth2/authorize?client_id=${interaction.applicationId}&permissions=0&scope=bot%20applications.commands`
+        //);
       }),
     }),
     makeCommand({

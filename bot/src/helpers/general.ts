@@ -58,3 +58,23 @@ export function checkChannelSendPerms(interaction: CommandInteraction) {
       return false;
   }
 }
+
+export function onlyIfAllExist<Rec extends Record<string, unknown>>(rec: Rec): {[K in keyof Rec]: NonNullable<Rec[K]>} | undefined;
+export function onlyIfAllExist(rec: Record<string, unknown>) {
+  for (const key in rec) {
+    if (rec[key] == null) return;
+  }
+  return rec;
+};
+
+export function maybePipe<A>(initial: A): NonNullable<A> | undefined;
+export function maybePipe<A, B>(initial: A, fn1: (input: NonNullable<A>) => B): NonNullable<B> | undefined;
+export function maybePipe(initial: unknown, ...fns: ((input: unknown) => unknown)[]) {
+  if (initial == null) return;
+  let result = initial;
+  for (const fn of fns) {
+    result = fn(result);
+    if (result == null) return;
+  }
+  return result;
+}
