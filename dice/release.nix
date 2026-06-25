@@ -1,4 +1,4 @@
 let
   pkgs = import <nixpkgs> { };
 in
-  pkgs.haskell.packages.ghc96.callPackage ./default.nix { }
+  pkgs.haskell.packages.ghc94.callPackage ./default.nix { }
