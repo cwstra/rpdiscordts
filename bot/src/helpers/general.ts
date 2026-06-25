@@ -71,7 +71,7 @@ export function maybePipe<A>(initial: A): NonNullable<A> | undefined;
 export function maybePipe<A, B>(initial: A, fn1: (input: NonNullable<A>) => B): NonNullable<B> | undefined;
 export function maybePipe(initial: unknown, ...fns: ((input: unknown) => unknown)[]) {
   if (initial == null) return;
-  let result = initial;
+  let result: unknown = initial;
   for (const fn of fns) {
     result = fn(result);
     if (result == null) return;
