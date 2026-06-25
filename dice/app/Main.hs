@@ -39,7 +39,7 @@ main = Scotty.scotty 4935 $
   Scotty.get "/roll" $ do
     input <- Scotty.param "roll"
     seed <- Scotty.param "seed"
-    maxDice <- Scotty.rescue (fmap Just $ Scotty.param "maxDice") (const $ return Nothing)
+    maxDice <- Scotty.rescue (fmap Just $ Scotty.param "maxDice") ((const $ return Nothing) :: (Void -> Scotty.ActionM (Maybe Int)))
     jsonResult <- Scotty.liftAndCatchIO $
       timeout 10000000 $
         return $
